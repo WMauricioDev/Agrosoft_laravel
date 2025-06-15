@@ -37,11 +37,16 @@ class RegisterRequest extends FormRequest
                 'max:255',
                 'unique:users,email',
             ],
-            'password'      =>      [
+            'numero_documento'                 => [
                 'required',
+                'numeric',
+                'digits_between:6,20', 
+                'unique:users,numero_documento',
+            ],
+            'password'      =>      [
                 'string',
-                'min:6',
-                'confirmed'
+                'nullable',
+
             ],
 
         ];
@@ -62,10 +67,14 @@ class RegisterRequest extends FormRequest
             'email.max'                       => 'El email no puede exceder los 255 caracteres.',
             'email.unique'                    => 'El correo ya existe en la base de datos.',
 
-            'password.required'  => 'La contraseña es obligatoria.',
-            'password.min'       => 'La contraseña debe tener mínimo 6 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password_confirmation.required' => 'Es necesario confirmar la contraseña.',
+            'numero_documento.required'  => 'El numero de documento es obligatoria.',
+            'numero_documento.min'       => 'El numero de documento debe tener mínimo 6 caracteres.',
+            'numero_documento.max'       => 'El numero de documento debe tener maximo 20 caracteres.',
+            'numero_documento.unique'    => 'El numero de documento ingresado ya esta en uso.',
+
+           
+            
         ];
     }
+    
 }

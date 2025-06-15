@@ -15,58 +15,68 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class AuthController extends Controller
 {
 
-    public function register(RegisterRequest $request): JsonResponse
-    {
-        $data = $request->validated();
-        $data['password'] = Hash::make($data['password']);
+public function register(RegisterRequest $request): JsonResponse
+{
+    $data = $request->validated();
 
-        try {
-            $user = User::create($data);
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario creado exitosamente',
-                'data'    => $user,
-            ], Response::HTTP_CREATED);
-        } catch (\Exception $e) {
-            Log::error('Error creando usuario: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'No se pudo crear el usuario',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+    if (empty($data['password'])) {
+        $primeraLetra = strtolower(substr($data['name'], 0, 1));
+        $generatedPassword = $primeraLetra . $data['numero_documento'];
+        $data['password'] = $generatedPassword;
+    } else {
+        $generatedPassword = $data['password'];
     }
 
-    public function login(LoginRequest $request): JsonResponse
-    {
+    $data['password'] = Hash::make($data['password']);
 
-        $credentials = $request->validated();
+    try {
+        $user = User::create($data);
 
-        try {
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario creado exitosamente',
+            'data'    => $user,
+            'password' => $generatedPassword, 
+        ], Response::HTTP_CREATED);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
 
-            if (! $token = auth('api')->attempt($credentials)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Credenciales inválidas.',
-                ], Response::HTTP_UNAUTHORIZED);
-            }
+public function login(LoginRequest $request): JsonResponse
+{
+    $credentials = $request->validated();
 
-            return response()->json([
-                'success'      => true,
-                'message'      => 'Autenticación exitosa.',
-                'access_token' => $token,
-                'token_type'   => 'Bearer',
-                'expires_in'   => JWTAuth::factory()->getTTL() * 60,
-            ], Response::HTTP_OK);
-        } catch (JWTException $e) {
+    // Asegurarse de que numero_documento sea string
+    $credentials['numero_documento'] = (string) $credentials['numero_documento'];
 
-            Log::error('Error generando JWT: ' . $e->getMessage());
-
+    try {
+        if (! $token = auth('api')->attempt($credentials)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error interno al generar el token.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                'message' => 'Credenciales inválidas.',
+            ], Response::HTTP_UNAUTHORIZED);
         }
+
+        return response()->json([
+            'success'      => true,
+            'message'      => 'Autenticación exitosa.',
+            'access_token' => $token,
+            'token_type'   => 'Bearer',
+            'expires_in'   => JWTAuth::factory()->getTTL() * 60,
+        ], Response::HTTP_OK);
+    } catch (JWTException $e) {
+        Log::error('Error generando JWT: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error interno al generar el token.',
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
 
     public function getUser(): JsonResponse
     {

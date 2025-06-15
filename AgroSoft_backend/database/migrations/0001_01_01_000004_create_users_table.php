@@ -18,6 +18,7 @@ Schema::create('users', function (Blueprint $table) {
     $table->string('name');
     $table->unsignedBigInteger('rol_id')->default(4);
     $table->string('email')->unique();
+    $table->unsignedBigInteger('numero_documento')->unique();
     $table->string('password');
     $table->rememberToken();
     $table->timestamps();
@@ -29,7 +30,8 @@ Schema::create('users', function (Blueprint $table) {
         DB::table('users')->insert([
         'name' => 'Adminer',
         'email' => 'admin@gmail.com',
-        'password' => Hash::make('123456'),
+        'numero_documento'=> 123456,
+        'password' => Hash::make('admin'),
         'rol_id' => 1,  
         'created_at' => now(),
         'updated_at' => now(),
