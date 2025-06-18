@@ -14,10 +14,12 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
-    {
-        return response()->json(User::all());
-    }
+    public function index()
+{
+    $usuarios = User::with('rol')->get();
+
+    return response()->json($usuarios);
+}
 
     /**
      * Show the form for creating a new resource.

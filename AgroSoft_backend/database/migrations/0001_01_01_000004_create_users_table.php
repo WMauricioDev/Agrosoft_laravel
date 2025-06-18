@@ -15,8 +15,9 @@ return new class extends Migration
     {
 Schema::create('users', function (Blueprint $table) {
     $table->id();
-    $table->string('name');
-    $table->unsignedBigInteger('rol_id')->default(4);
+    $table->string('nombre');
+    $table->string("apellido");
+    $table->unsignedBigInteger('rol_id')->default(1);
     $table->string('email')->unique();
     $table->unsignedBigInteger('numero_documento')->unique();
     $table->string('password');
@@ -28,11 +29,12 @@ Schema::create('users', function (Blueprint $table) {
 });
 
         DB::table('users')->insert([
-        'name' => 'Adminer',
+        'nombre' => 'Adminer',
+        'apellido'=>'userauth',
         'email' => 'admin@gmail.com',
         'numero_documento'=> 123456,
         'password' => Hash::make('admin'),
-        'rol_id' => 1,  
+        'rol_id' => 4,  
         'created_at' => now(),
         'updated_at' => now(),
     ]);

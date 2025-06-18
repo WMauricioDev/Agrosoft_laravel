@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use App\Models\Roles;
 use Illuminate\Http\Request;
 
@@ -10,10 +11,18 @@ class RolesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+public function index()
+{
+    $roles = Roles::all();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Lista de roles obtenida correctamente.',
+        'data' => $roles,
+    ]);
+}
+
+
 
     /**
      * Show the form for creating a new resource.

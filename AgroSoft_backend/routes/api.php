@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\Trazabilidad\TipoActividadController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\RolesController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUserAuth;
 use Illuminate\Support\Facades\Route;
@@ -23,13 +24,16 @@ Route::get('elementos', [InsumoController::class, 'index'])
 // ── RUTAS PROTEGIDAS (Usuario autenticado) ───────────────────────────────────
 
 Route::middleware(IsUserAuth::class)->group(function () {
-    // Traer todos los usuarios
-    Route::get('user', [UserController::class, 'index'])->name('users.index');
-    // Traer usuario por ID
-    Route::get('user/{user}', [UserController::class, 'show'])->name('users.show');    
-    // Información del propio usuario
+   // Información del propio usuario
     Route::get('user/me', [AuthController::class, 'getUser'])
         ->name('auth.user');
+    // Traer usuario por ID
+    Route::get('user/{user}', [UserController::class, 'show'])->name('users.show');    
+     // Traer todos los usuarios
+    Route::get('user', [UserController::class, 'index'])->name('users.index');
+    // Traer los roles
+    Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
+
 
     // Cerrar sesión
     Route::post('logout', [AuthController::class, 'logout'])

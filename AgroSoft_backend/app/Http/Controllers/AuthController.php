@@ -20,7 +20,7 @@ public function register(RegisterRequest $request): JsonResponse
     $data = $request->validated();
 
     if (empty($data['password'])) {
-        $primeraLetra = strtolower(substr($data['name'], 0, 1));
+        $primeraLetra = strtolower(substr($data['nombre'], 0, 1));
         $generatedPassword = $primeraLetra . $data['numero_documento'];
         $data['password'] = $generatedPassword;
     } else {
@@ -78,32 +78,53 @@ public function login(LoginRequest $request): JsonResponse
     }
 }
 
-    public function getUser(): JsonResponse
-    {
-        try {
-            $user = auth('api')->user();
+public function getUser(): JsonResponse
+{
+    try {
+        $userId = auth('api')->id();
 
-            if (! $user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Usuario no autenticado.',
-                ], Response::HTTP_UNAUTHORIZED);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario obtenido con éxito.',
-                'data'    => $user,
-            ], Response::HTTP_OK);
-        } catch (\Exception $e) {
-            Log::error('Error obteniendo usuario: ' . $e->getMessage());
-
+        if (! $userId) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error interno al obtener el usuario.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                'message' => 'Usuario no autenticado.',
+            ], Response::HTTP_UNAUTHORIZED);
         }
+
+        $user = \App\Models\User::with('rol')->find($userId);
+         dd($user->rol);
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no encontrado.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario obtenido con éxito.',
+            'data'    => [
+                'id' => $user->id,
+                'nombre' => $user->nombre,
+                'apellido' => $user->apellido,
+                'email' => $user->email,
+                'numero_documento' => $user->numero_documento,
+                'username' => $user->username,
+                'rol' => [
+                    'id' => $user->rol->id,
+                    'nombre' => $user->rol->nombre,
+                ],
+            ],
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error obteniendo usuario: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error interno al obtener el usuario.',
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
     public function logout(): JsonResponse
     {
         try {
