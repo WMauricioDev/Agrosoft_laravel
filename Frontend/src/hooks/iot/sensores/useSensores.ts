@@ -6,7 +6,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}/iot/sensores/`;
 
 const fetchSensores = async (): Promise<Sensor[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) {
     console.error("[useSensores] No se encontró el token de autenticación.");
     throw new Error("No se encontró el token de autenticación.");

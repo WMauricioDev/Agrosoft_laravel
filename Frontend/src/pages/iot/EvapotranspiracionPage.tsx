@@ -26,7 +26,7 @@ interface EvapotranspiracionData {
 }
 
 const fetchBancales = async (): Promise<Bancal[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get("http://127.0.0.1:8000/cultivo/Bancal/", {
     headers: { Authorization: `Bearer ${token}` },
@@ -36,7 +36,7 @@ const fetchBancales = async (): Promise<Bancal[]> => {
 };
 
 const fetchEvapotranspiracion = async (): Promise<EvapotranspiracionData[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get("http://127.0.0.1:8000/iot/evapotranspiracion/", {
     headers: { Authorization: `Bearer ${token}` },
@@ -50,7 +50,7 @@ const calcularEvapotranspiracion = async (data: {
   fecha: string;
   latitud: number;
 }) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.post(
     "http://127.0.0.1:8000/iot/evapotranspiracion/calcular/",

@@ -15,7 +15,7 @@ interface CreateVentaData {
 }
 
 const fetchVentas = async (): Promise<Venta[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("Token no encontrado");
   const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
@@ -24,7 +24,7 @@ const fetchVentas = async (): Promise<Venta[]> => {
 };
 
 const registrarVenta = async (ventaData: CreateVentaData): Promise<Venta> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("Token no encontrado");
 
   const totalVenta = ventaData.detalles.reduce((sum, detalle) => sum + detalle.total, 0);
@@ -55,7 +55,7 @@ const registrarVenta = async (ventaData: CreateVentaData): Promise<Venta> => {
 };
 
 const actualizarVenta = async (venta: Venta): Promise<Venta> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token || !venta.id) throw new Error("Falta token o ID");
 
   const payload = {
@@ -75,7 +75,7 @@ const actualizarVenta = async (venta: Venta): Promise<Venta> => {
 };
 
 const eliminarVenta = async (id: number): Promise<void> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("Token no encontrado");
 
   await api.delete(`${API_URL}${id}/`, {
@@ -84,7 +84,7 @@ const eliminarVenta = async (id: number): Promise<void> => {
 };
 
 const fetchDetallesVenta = async (ventaId: number): Promise<DetalleVenta[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("Token no encontrado");
   
   const response = await api.get(`${API_URL}${ventaId}/detalles/`, {

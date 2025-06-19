@@ -7,7 +7,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}/inventario/insumo/`;
 
 const fetchInsumos = async (): Promise<Insumo[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     const response = await api.get(API_URL, {
@@ -25,7 +25,7 @@ export const useInsumos = () => {
 };
 
 const fetchUnidadesMedida = async (): Promise<UnidadMedida[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     const response = await api.get(`${API_URL}unidades_medida/`, {
@@ -43,7 +43,7 @@ export const useUnidadesMedida = () => {
 };
 
 const fetchTiposInsumo = async (): Promise<TipoInsumo[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     const response = await api.get(`${API_URL}tipos_insumo/`, {
@@ -61,7 +61,7 @@ export const useTiposInsumo = () => {
 };
 
 const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida" | "tipo_insumo"> & { unidad_medida_id?: number; tipo_insumo_id?: number }) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -112,7 +112,7 @@ interface ActualizarInsumoParams {
 }
 
 const actualizarInsumo = async (id: number, insumo: ActualizarInsumoParams["insumo"]) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -155,7 +155,7 @@ export const useActualizarInsumo = () => {
 };
 
 const eliminarInsumo = async (id: number) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -198,7 +198,7 @@ export const useEliminarInsumo = () => {
 };
 
 const crearUnidadMedida = async (unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -232,7 +232,7 @@ export const useCrearUnidadMedida = () => {
 };
 
 const crearTipoInsumo = async (tipo: Omit<TipoInsumo, "id" | "fecha_creacion" | "creada_por_usuario">) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -275,7 +275,7 @@ export const useCrearTipoInsumo = () => {
 };
 
 const usarEnActividad = async (id: number, data: { cantidad_usada: number; actividad_id?: number }) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {

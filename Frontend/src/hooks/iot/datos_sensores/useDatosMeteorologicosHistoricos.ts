@@ -8,7 +8,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}/iot/datosmeteorologicos/`;
 
 const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) {
     console.error("[useDatosMeteorologicosHistoricos] No se encontró el token de autenticación.");
     addToast({
@@ -58,7 +58,7 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
       }
       try {
         const newToken = await obtenerNuevoToken(refreshToken);
-        localStorage.setItem("access_token", newToken);
+        localStorage.setItem("accesso_token", newToken);
         console.log("[useDatosMeteorologicosHistoricos] Reintentando con nuevo token");
         const response = await api.get(API_URL, {
           headers: { Authorization: `Bearer ${newToken}` },
@@ -96,13 +96,13 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
         timeout: 3000,
         color: "danger",
       });
-    } else {
-      addToast({
-        title: "Error",
-        description: "Error al cargar los datos históricos",
-        timeout: 3000,
-        color: "danger",
-      });
+    // } else {
+    //   addToast({
+    //     title: "Error",
+    //     description: "Error al cargar los datos históricos",
+    //     timeout: 3000,
+    //     color: "danger",
+    //   });
     }
     throw error;
   }

@@ -54,6 +54,10 @@ class RegisterRequest extends FormRequest
                 'nullable',
 
             ],
+                'estado' => [
+                'boolean',
+            ],
+
 
         ];
     }

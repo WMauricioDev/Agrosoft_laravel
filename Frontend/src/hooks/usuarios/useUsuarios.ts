@@ -36,7 +36,7 @@ export const useUsuarios = () => {
   const queryClient = useQueryClient();
 
   const fetchUsuarios = async (): Promise<Usuario[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     const response = await api.get(`${API_URL}user/`, {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -47,7 +47,7 @@ export const useUsuarios = () => {
 
   
   const fetchRoles = async (): Promise<Rol[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     const response = await api.get(`${API_URL}roles/`, {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -57,7 +57,7 @@ export const useUsuarios = () => {
   };
 
   const updateUsuario = async (usuario: UsuarioUpdate): Promise<Usuario> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     const response = await api.put(`${API_URL}usuarios/${usuario.id}/`, usuario, {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -65,7 +65,7 @@ export const useUsuarios = () => {
     return response.data; 
   };
   const deleteUsuario = async (id: number): Promise<void> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     await api.delete(`${API_URL}usuarios/${id}/`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -76,14 +76,14 @@ export const useUsuarios = () => {
     queryKey: ["usuarios"],
     queryFn: fetchUsuarios,
     retry: 1,
-    enabled: !!localStorage.getItem("access_token"),
+    enabled: !!localStorage.getItem("accesso_token"),
   });
 
   const rolesQuery = useQuery<Rol[], Error>({
     queryKey: ["roles"],
     queryFn: fetchRoles,
     retry: 1,
-    enabled: !!localStorage.getItem("access_token"),
+    enabled: !!localStorage.getItem("accesso_token"),
   });
 
   const updateMutation = useMutation<Usuario, Error, UsuarioUpdate>({

@@ -32,7 +32,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setAuthenticated] = useState<boolean>(!!localStorage.getItem("access_token"));
+  const [isAuthenticated, setAuthenticated] = useState<boolean>(!!localStorage.getItem("accesso_token"));localStorage.removeItem("access_token");
+
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
@@ -59,7 +60,7 @@ const login = async (numeroDocumento: number, password: string) => {
       throw new Error("No se recibió token");
     }
 
-    localStorage.setItem("access_token", token);
+    localStorage.setItem("accesso_token", token);
     setAuthenticated(true);
 
     const userResponse = await fetch(`${API_URL}/api/user/me/`, {
@@ -89,7 +90,7 @@ const login = async (numeroDocumento: number, password: string) => {
     console.error("Error en login:", error);
     setAuthenticated(false);
     setUser(null);
-    localStorage.removeItem("access_token");
+    localStorage.removeItem("accesso_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user");
     throw error;
@@ -97,7 +98,7 @@ const login = async (numeroDocumento: number, password: string) => {
 };
 
   const logout = () => {
-    localStorage.removeItem("access_token");
+    localStorage.removeItem("accesso_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user");
     setAuthenticated(false);

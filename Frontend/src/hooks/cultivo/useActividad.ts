@@ -9,7 +9,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}/cultivo/actividades/`;
 
 const fetchActividades = async (): Promise<Actividad[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
   
     if (!token) {
       throw new Error("No se encontró el token de autenticación.");
@@ -31,7 +31,7 @@ const fetchActividades = async (): Promise<Actividad[]> => {
   };
 
 const fetchUsuarios = async (): Promise<User[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
 
     if (!token) {
         throw new Error("No se encontró el token de autenticación.");
@@ -53,7 +53,7 @@ export const useUsuarios = () => {
 };
 
 const fetchInsumos = async (): Promise<Insumo[]>=> {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
 
     if (!token) {
         throw new Error("No se encontró el token de autenticación.");
@@ -75,7 +75,7 @@ export const useInsumos = () => {
 };
 
 const registrarActividad = async (actividad: Actividad) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
       throw new Error("No se encontró el token de autenticación.");
@@ -107,7 +107,7 @@ const registrarActividad = async (actividad: Actividad) => {
   }
 };
 const eliminarActividad = async (id: number) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
     return api.delete(`${API_URL}${id}/`, {
@@ -115,7 +115,7 @@ const eliminarActividad = async (id: number) => {
     });
   };
   const actualizarActividad = async (id: number, actividad: Actividad) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
     if (actividad.estado === 'COMPLETADA') {
@@ -239,7 +239,7 @@ export const useActualizarActividad = () => {
       cantidad_devuelta: number;
     }>;
   }) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
     try {
