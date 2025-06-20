@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Usuarios;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
+use App\Models\Usuarios\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -93,7 +93,17 @@ public function login(LoginRequest $request): JsonResponse
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario obtenido con éxito.',
-                'data'    => $user,
+                'data' => [
+                'id' => $user->id,
+                'nombre' => $user->nombre,
+                'apellido' => $user->apellido,
+                'email'=> $user->email,
+                    'rol' => $user->rol ? [
+                        'id' => $user->rol->id,
+                        'nombre' => $user->rol->nombre,
+                    ] : null,
+            ]
+
             ], Response::HTTP_OK);
         } catch (\Exception $e) {
             Log::error('Error obteniendo usuario: ' . $e->getMessage());

@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { TipoControl } from "@/types/cultivo/TipoControl";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/cultivo/tipo_control/`;
+const API_URL = `${BASE_URL}/api/tipo_control/`;
 
 const fetchTipoControl = async (): Promise<TipoControl[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
@@ -22,7 +22,7 @@ const fetchTipoControl = async (): Promise<TipoControl[]> => {
 };
 
 const registrarTipoControl = async (tipoControl: TipoControl) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
@@ -41,7 +41,7 @@ const registrarTipoControl = async (tipoControl: TipoControl) => {
 };
 
 const actualizarTipoControl = async (id: number, tipoControl: TipoControl) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
@@ -56,7 +56,7 @@ const actualizarTipoControl = async (id: number, tipoControl: TipoControl) => {
 };
 
 const eliminarTipoControl = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {

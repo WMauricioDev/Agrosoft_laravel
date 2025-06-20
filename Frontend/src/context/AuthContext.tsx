@@ -32,7 +32,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setAuthenticated] = useState<boolean>(!!localStorage.getItem("accesso_token"));localStorage.removeItem("access_token");
+  const [isAuthenticated, setAuthenticated] = useState<boolean>(!!localStorage.getItem("accesso_token"));localStorage.removeItem("access_token");localStorage.removeItem("refresh_token");
 
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");

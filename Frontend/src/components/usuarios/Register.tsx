@@ -31,7 +31,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${API_URL}/usuarios/registro/`, {
+      const response = await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

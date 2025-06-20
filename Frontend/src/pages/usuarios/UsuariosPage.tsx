@@ -57,7 +57,6 @@ const UsuariosPage: React.FC = () => {
     { name: "Apellido", uid: "apellido" },
     { name: "Correo electrónico", uid: "email" },
     { name: "Número de documento", uid: "numero_documento" },
-    { name: "Username", uid: "username" },
     { name: "Rol", uid: "rol" },
     { name: "Estado", uid: "estado" }, 
     { name: "Acciones", uid: "acciones" },
@@ -114,7 +113,7 @@ const UsuariosPage: React.FC = () => {
       numero_documento: usuario.numero_documento,
       username: usuario.username || "N/A",
       is_staff: usuario.is_staff, // ✅ esto faltaba
-      rol: usuario.rol?.rol || "Sin rol",
+      rol: usuario.rol.nombre || "Sin rol",
     estado: (
 <Switcher
   size="sm"

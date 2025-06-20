@@ -1,25 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Usuarios;
 
-use App\Models\User;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Usuarios\Roles;
+use Illuminate\Http\Request;
 
-
-class UserController extends Controller
+class RolesController extends Controller
 {
-    
     /**
      * Display a listing of the resource.
      */
-    public function index()
+public function index()
 {
-    $usuarios = User::with('rol')->get();
+    $roles = Roles::all();
 
-    return response()->json($usuarios);
+    return response()->json([
+        'success' => true,
+        'message' => 'Lista de roles obtenida correctamente.',
+        'data' => $roles,
+    ]);
 }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -40,15 +43,15 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user):JsonResponse
+    public function show(Roles $roles)
     {
-        return response()->json($user);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(Roles $roles)
     {
         //
     }
@@ -56,7 +59,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, Roles $roles)
     {
         //
     }
@@ -64,7 +67,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(Roles $roles)
     {
         //
     }
