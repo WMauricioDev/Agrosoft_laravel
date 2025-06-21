@@ -22,16 +22,13 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => [
+            'numero_documento'    => [
                 'required',
-                'string',
-                'email',
-                'max:255',
+                'numeric',
             ],
             'password' => [
                 'required',
                 'string',
-                'min:5'
             ],
         ];
     }
@@ -40,14 +37,14 @@ class LoginRequest extends FormRequest
     {
         return [
     
-            'email.required'     =>     'El correo electrónico es obligatorio.',
-            'email.string'       =>     'El correo electrónico debe ser un texto válido.',
-            'email.email'        =>     'El correo electrónico debe tener un formato válido.',
-            'email.max'          =>     'El correo electrónico no puede exceder los 255 caracteres.',
+            'numero_documento.required'     =>     'El Numero de documento es obligatorio.',
+            'numero_documento.string'       =>     'El Numero de documento debe ser un texto válido.',
+            'numero_documento.numero_documento'        =>     'El Numero de documento debe tener un formato válido.',
+            'numero_documento.max'          =>     'El Numero de documento no puede exceder los 20 caracteres.',
     
             'password.required'  =>     'La contraseña es obligatoria.',
-            'password.string'    =>     'La contraseña debe ser un texto válido.',
-            'password.min'       =>     'La contraseña debe tener al menos 5 caracteres.',
+            'password.numeric'    =>     'La contraseña debe ser un texto válido.',
+            'password.min'       =>     'La contraseña debe tener al menos 6 caracteres.',
         ];
 
     }
