@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { Lote } from "@/types/cultivo/Lotes";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/cultivo/lote/`;
+const API_URL = `${BASE_URL}/api/lotes/`;
 
 const fetchLotes = async (): Promise<Lote[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
@@ -22,7 +22,7 @@ const fetchLotes = async (): Promise<Lote[]> => {
 };
 
 const registrarLote = async (lote: Lote) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
@@ -77,7 +77,7 @@ export const useRegistrarLote = () => {
 };
 
 const actualizarLote = async (id: number, lote: Lote) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
@@ -120,7 +120,7 @@ export const useActualizarLote = () => {
 };
 
 const eliminarLote = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {

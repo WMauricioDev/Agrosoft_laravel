@@ -58,7 +58,7 @@
       TamY: bancal.tam_y,
       posX: bancal.latitud,
       posY: bancal.longitud,
-      fk_lote: lotes?.find((lote) => lote.id === bancal.lote)?.nombre || 'Sin lote',
+      fk_lote: lotes?.find((lote) => lote.id === bancal.lote_id)?.nombre || 'Sin lote',
       acciones: (
         <>
           <button

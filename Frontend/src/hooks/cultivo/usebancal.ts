@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { Bancal } from "@/types/cultivo/Bancal"; 
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/cultivo/Bancal/`;
+const API_URL = `${BASE_URL}/api/Bancal`;
 
 const fetchBancales = async (): Promise<Bancal[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
@@ -22,11 +22,13 @@ const fetchBancales = async (): Promise<Bancal[]> => {
 };
 
 const registrarBancal = async (bancal: Bancal) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
   }
+  console.log("📦 Payload enviado al backend:", bancal);
+
 
   return api.post(API_URL, bancal, {
     headers: {
@@ -76,7 +78,7 @@ export const useRegistrarBancal = () => {
 };
 
 const actualizarBancal = async (id: number, bancal: any) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
@@ -119,7 +121,7 @@ export const useActualizarBancal = () => {
 };
 
 const eliminarBancal = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {

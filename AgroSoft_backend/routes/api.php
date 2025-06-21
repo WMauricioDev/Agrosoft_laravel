@@ -3,6 +3,8 @@
 use App\Http\Controllers\Usuarios\AuthController;
 use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\Trazabilidad\TipoActividadController;
+use App\Http\Controllers\Trazabilidad\LoteController;
+use App\Http\Controllers\Trazabilidad\BancalController;
 use App\Http\Controllers\Usuarios\UserController;
 use App\Http\Controllers\Usuarios\RolesController;
 use App\Http\Middleware\IsAdmin;
@@ -64,6 +66,30 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('/tipo_control/{id}', [TipoControlController::class, 'show']);
     Route::put('/tipo_control/{id}', [TipoControlController::class, 'update']);
     Route::delete('/tipo_control/{id}', [TipoControlController::class, 'destroy']);
+
+    //Lotes
+    Route::get('lotes', [LoteController::class, 'index'])
+        ->name('lotes.index');
+    Route::get('lotes/{lote}', [LoteController::class, 'show'])
+        ->name('lotes.show');
+    Route::post('lotes', [LoteController::class, 'store'])
+        ->name('lotes.store');
+    Route::put('lotes/{lote}', [LoteController::class, 'update'])
+        ->name('lotes.update');
+    Route::delete('lotes/{lote}', [LoteController::class, 'destroy'])
+        ->name('lotes.destroy');
+        
+    //Bancal
+    Route::get('Bancal', [BancalController::class, 'index'])
+        ->name('Bancal.index');
+    Route::get('Bancal/{bancal}', [BancalController::class, 'show'])
+        ->name('Bancal.show');
+    Route::post('Bancal', [BancalController::class, 'store'])
+        ->name('Bancal.store');
+    Route::put('Bancal/{bancal}', [BancalController::class, 'update'])
+        ->name('Bancal.update');
+    Route::delete('Bancal/{bancal}', [BancalController::class, 'destroy'])
+        ->name('Bancal.destroy');
     // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
     Route::middleware(IsAdmin::class)->group(function () {
         // Insumos

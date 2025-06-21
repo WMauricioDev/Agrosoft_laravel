@@ -5,10 +5,10 @@ import { TipoActividad } from "@/types/cultivo/TipoActividad";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/cultivo/tipo_actividad/`;
+const API_URL = `${BASE_URL}/api/tipo-actividades`;
 
 const fetchTipoActividad = async (): Promise<TipoActividad[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
@@ -23,23 +23,32 @@ const fetchTipoActividad = async (): Promise<TipoActividad[]> => {
 };
 
 const registrarTipoActividad = async (tipoActividad: TipoActividad) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
+    console.error("⚠️ Token no encontrado en localStorage");
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  const formData = new FormData();
-  formData.append("nombre", tipoActividad.nombre);
-  formData.append("descripcion", tipoActividad.descripcion);
+  try {
+    console.log("➡️ Registrando tipo de actividad:", tipoActividad);
 
-  return api.post(API_URL, formData, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+    const response = await api.post(`${API_URL}`, tipoActividad, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("✅ Registro exitoso:", response.data);
+    return response.data;
+
+  } catch (error: any) {
+    console.error("❌ Error al registrar tipo de actividad:", error.response?.data || error.message);
+    throw error;
+  }
 };
+
 
 export const useTipoActividad = () => {
   return useQuery<TipoActividad[], Error>({
@@ -83,7 +92,7 @@ export const useRegistrarTipoActividad = () => {
 };
 
 const actualizarTipoActividad = async (id: number, tipoActividad: TipoActividad) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
@@ -126,7 +135,7 @@ export const useActualizarTipoActividad = () => {
 };
 
 const eliminarTipoActividad = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {
