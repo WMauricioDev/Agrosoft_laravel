@@ -5,6 +5,8 @@ use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\Trazabilidad\TipoActividadController;
 use App\Http\Controllers\Trazabilidad\LoteController;
 use App\Http\Controllers\Trazabilidad\BancalController;
+use App\Http\Controllers\Trazabilidad\TipoEspecieController;
+use App\Http\Controllers\Trazabilidad\EspecieController;
 use App\Http\Controllers\Usuarios\UserController;
 use App\Http\Controllers\Usuarios\RolesController;
 use App\Http\Middleware\IsAdmin;
@@ -90,6 +92,29 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('Bancal.update');
     Route::delete('Bancal/{bancal}', [BancalController::class, 'destroy'])
         ->name('Bancal.destroy');
+
+    // Tipo Especies
+    Route::get('tipo-especies', [TipoEspecieController::class, 'index'])
+        ->name('tipo-especies.index');
+    Route::get('tipo-especies/{tipoEspecie}', [TipoEspecieController::class, 'show'])
+        ->name('tipo-especies.show');
+    Route::post('tipo-especies', [TipoEspecieController::class, 'store'])
+        ->name('tipo-especies.store');
+    Route::put('tipo-especies/{tipoEspecie}', [TipoEspecieController::class, 'update'])
+        ->name('tipo-especies.update');
+    Route::delete('tipo-especies/{tipoEspecie}', [TipoEspecieController::class, 'destroy'])
+        ->name('tipo-especies.destroy');
+     // Especies
+    Route::get('especies', [EspecieController::class, 'index'])
+        ->name('especies.index');
+    Route::get('especies/{especie}', [EspecieController::class, 'show'])
+        ->name('especies.show');
+    Route::post('especies', [EspecieController::class, 'store'])
+        ->name('especies.store');
+    Route::put('especies/{especie}', [EspecieController::class, 'update'])
+        ->name('especies.update');
+    Route::delete('especies/{especie}', [EspecieController::class, 'destroy'])
+        ->name('especies.destroy');   
     // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
     Route::middleware(IsAdmin::class)->group(function () {
         // Insumos

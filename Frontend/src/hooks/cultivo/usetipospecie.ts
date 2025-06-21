@@ -5,10 +5,10 @@ import { TipoEspecie } from "@/types/cultivo/TipoEspecie";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/cultivo/tipo_especies/`;
+const API_URL = `${BASE_URL}/api/tipo_especies/`;
 
 const fetchTipoEspecies = async (): Promise<TipoEspecie[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },

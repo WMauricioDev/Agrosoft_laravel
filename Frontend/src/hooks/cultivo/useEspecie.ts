@@ -4,10 +4,10 @@ import { Especie } from "@/types/cultivo/Especie";
 import { addToast } from "@heroui/react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/cultivo/especies/`;
+const API_URL = `${BASE_URL}/api/especies/`;
 
 const fetchEspecies = async (): Promise<Especie[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
@@ -22,7 +22,7 @@ const fetchEspecies = async (): Promise<Especie[]> => {
 };
 
 const registrarEspecie = async (especie: FormData) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
 
   if (!token) {
     throw new Error("No se encontró el token de autenticación.");
@@ -76,7 +76,7 @@ export const useRegistrarEspecie = () => {
 };
 
 const actualizarEspecie = async (id: number, especie: any) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
@@ -119,7 +119,7 @@ export const useActualizarEspecie = () => {
 };
 
 const eliminarEspecie = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {
