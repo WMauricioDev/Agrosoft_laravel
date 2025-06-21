@@ -53,8 +53,8 @@ const ListaEspeciePage: React.FC = () => {
     id: especie.id?.toString() || '',
     nombre: especie.nombre,
     descripcion: especie.descripcion,
-    largoCrecimiento: especie.largoCrecimiento,
-    fk_tipo_especie: tiposEspecie?.find((tipo) => tipo.id === especie.fk_tipo_especie)?.nombre || 'Sin tipo',
+    largoCrecimiento: especie.largo_crecimiento,
+    fk_tipo_especie: tiposEspecie?.find((tipo) => tipo.id === especie.tipo_especie_id)?.nombre || 'Sin tipo',
     img: especie.img ? <img src={especie.img} alt={especie.nombre} className="w-16 h-16" /> : "Sin imagen",
     acciones: (
       <>

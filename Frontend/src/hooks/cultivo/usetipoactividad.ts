@@ -26,12 +26,10 @@ const registrarTipoActividad = async (tipoActividad: TipoActividad) => {
   const token = localStorage.getItem("accesso_token");
 
   if (!token) {
-    console.error("⚠️ Token no encontrado en localStorage");
     throw new Error("No se encontró el token de autenticación.");
   }
 
   try {
-    console.log("➡️ Registrando tipo de actividad:", tipoActividad);
 
     const response = await api.post(`${API_URL}`, tipoActividad, {
       headers: {

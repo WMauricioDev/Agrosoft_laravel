@@ -12,8 +12,8 @@ const EspeciePage: React.FC = () => {
   const [especie, setEspecie] = useState({
     nombre: "",
     descripcion: "",
-    largoCrecimiento: 0,
-    fk_tipo_especie: 0,
+    largo_crecimiento: 0,
+    tipo_especie_id: 0,
     img: "",
   });
 
@@ -36,8 +36,8 @@ const EspeciePage: React.FC = () => {
     const formData = new FormData();
     formData.append("nombre", especie.nombre);
     formData.append("descripcion", especie.descripcion);
-    formData.append("largoCrecimiento", especie.largoCrecimiento.toString());
-    formData.append("fk_tipo_especie", especie.fk_tipo_especie.toString());
+    formData.append("largo_crecimiento", especie.largo_crecimiento.toString());
+    formData.append("tipo_especie_id", especie.tipo_especie_id.toString());
     formData.append("img", especie.img);
 
     mutation.mutate(formData);
@@ -75,8 +75,8 @@ const EspeciePage: React.FC = () => {
           label="Largo de Crecimiento"
           placeholder="Ingrese el tiempo en días"
           type="number"
-          value={especie.largoCrecimiento}
-          onChange={(e) => setEspecie({ ...especie, largoCrecimiento: Number(e.target.value) })}
+          value={especie.largo_crecimiento}
+          onChange={(e) => setEspecie({ ...especie, largo_crecimiento: Number(e.target.value) })}
         />
 
         <div className="mb-1">
@@ -93,8 +93,8 @@ const EspeciePage: React.FC = () => {
 
           <select
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            name="fk_tipo_especie"
-            value={especie.fk_tipo_especie}
+            name="tipo_especie_id"
+            value={especie.tipo_especie_id}
             onChange={handleChange}
           >
             <option value="">Seleccione un tipo</option>

@@ -5,6 +5,12 @@ use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\Trazabilidad\TipoActividadController;
 use App\Http\Controllers\Trazabilidad\LoteController;
 use App\Http\Controllers\Trazabilidad\BancalController;
+use App\Http\Controllers\Trazabilidad\TipoEspecieController;
+use App\Http\Controllers\Trazabilidad\EspecieController;
+use App\Http\Controllers\Trazabilidad\CultivoController;
+use App\Http\Controllers\Trazabilidad\UnidadMedidaController;
+use App\Http\Controllers\Trazabilidad\CosechaController;
+use App\Http\Controllers\Finanzas\SalarioController;
 use App\Http\Controllers\Usuarios\UserController;
 use App\Http\Controllers\Usuarios\RolesController;
 use App\Http\Middleware\IsAdmin;
@@ -90,6 +96,75 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('Bancal.update');
     Route::delete('Bancal/{bancal}', [BancalController::class, 'destroy'])
         ->name('Bancal.destroy');
+
+    // Tipo Especies
+    Route::get('tipo-especies', [TipoEspecieController::class, 'index'])
+        ->name('tipo-especies.index');
+    Route::get('tipo-especies/{tipoEspecie}', [TipoEspecieController::class, 'show'])
+        ->name('tipo-especies.show');
+    Route::post('tipo-especies', [TipoEspecieController::class, 'store'])
+        ->name('tipo-especies.store');
+    Route::put('tipo-especies/{tipoEspecie}', [TipoEspecieController::class, 'update'])
+        ->name('tipo-especies.update');
+    Route::delete('tipo-especies/{tipoEspecie}', [TipoEspecieController::class, 'destroy'])
+        ->name('tipo-especies.destroy');
+     // Especies
+    Route::get('especies', [EspecieController::class, 'index'])
+        ->name('especies.index');
+    Route::get('especies/{especie}', [EspecieController::class, 'show'])
+        ->name('especies.show');
+    Route::post('especies', [EspecieController::class, 'store'])
+        ->name('especies.store');
+    Route::put('especies/{especie}', [EspecieController::class, 'update'])
+        ->name('especies.update');
+    Route::delete('especies/{especie}', [EspecieController::class, 'destroy'])
+        ->name('especies.destroy');
+    // Cultivos
+    Route::get('cultivos', [CultivoController::class, 'index'])
+        ->name('cultivos.index');
+    Route::get('cultivos/{cultivo}', [CultivoController::class, 'show'])
+        ->name('cultivos.show');
+    Route::post('cultivos', [CultivoController::class, 'store'])
+        ->name('cultivos.store');
+    Route::put('cultivos/{cultivo}', [CultivoController::class, 'update'])
+        ->name('cultivos.update');
+    Route::delete('cultivos/{cultivo}', [CultivoController::class, 'destroy'])
+        ->name('cultivos.destroy');
+    // Cosechas
+    Route::get('cosechas', [CosechaController::class, 'index'])
+        ->name('cosechas.index');
+    Route::get('cosechas/{cosecha}', [CosechaController::class, 'show'])
+        ->name('cosechas.show');
+    Route::post('cosechas', [CosechaController::class, 'store'])
+        ->name('cosechas.store');
+    Route::put('cosechas/{cosecha}', [CosechaController::class, 'update'])
+        ->name('cosechas.update');
+    Route::delete('cosechas/{cosecha}', [CosechaController::class, 'destroy'])
+        ->name('cosechas.destroy');    
+    // Unidades de Medida
+    Route::get('unidad-medidas', [UnidadMedidaController::class, 'index'])
+        ->name('unidad-medidas.index');
+    Route::get('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'show'])
+        ->name('unidad-medidas.show');
+    Route::post('unidad-medidas', [UnidadMedidaController::class, 'store'])
+        ->name('unidad-medidas.store');
+    Route::put('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'update'])
+        ->name('unidad-medidas.update');
+    Route::delete('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'destroy'])
+        ->name('unidad-medidas.destroy');
+    // Salarios
+    Route::get('salarios', [SalarioController::class, 'index'])
+        ->name('salarios.index');
+    Route::get('salarios/actuales', [SalarioController::class, 'actuales'])
+        ->name('salarios.actuales');
+    Route::get('salarios/{salario}', [SalarioController::class, 'show'])
+        ->name('salarios.show');
+    Route::post('salarios', [SalarioController::class, 'store'])
+        ->name('salarios.store')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::put('salarios/{salario}', [SalarioController::class, 'update'])
+        ->name('salarios.update')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::delete('salarios/{salario}', [SalarioController::class, 'destroy'])
+        ->name('salarios.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);               
     // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
     Route::middleware(IsAdmin::class)->group(function () {
         // Insumos
