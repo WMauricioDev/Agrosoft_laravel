@@ -4,7 +4,7 @@ import { Salario } from "@/types/finanzas/Salario";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/finanzas/salario/`;
+const API_URL = `${BASE_URL}/api/salarios/`;
 
 // Función para formatear números al estilo colombiano (1.000.000)
 export const formatColombianPeso = (value: number): string => {
@@ -24,7 +24,7 @@ export const useSalarios = () => {
   return useQuery({
     queryKey: ["salarios"],
     queryFn: async () => {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accesso_token");
       if (!token) throw new Error("No se encontró el token de autenticación.");
 
       const response = await api.get(API_URL, {
@@ -47,7 +47,7 @@ export const useRegistrarSalario = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (salario: Salario) => {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accesso_token");
       if (!token) throw new Error("No se encontró el token de autenticación.");
 
       const valorNumerico = typeof salario.valorJornal === 'string'
@@ -79,7 +79,7 @@ export const useActualizarSalario = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (salario: Salario) => {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accesso_token");
       if (!token || !salario.id) throw new Error("Token o ID faltante");
 
       const valorNumerico = typeof salario.valorJornal === 'string'
@@ -114,7 +114,7 @@ export const useEliminarSalario = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accesso_token");
       if (!token) throw new Error("No se encontró el token de autenticación.");
 
       await api.delete(`${API_URL}${id}/`, {

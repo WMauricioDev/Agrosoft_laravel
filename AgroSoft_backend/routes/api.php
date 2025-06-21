@@ -10,6 +10,7 @@ use App\Http\Controllers\Trazabilidad\EspecieController;
 use App\Http\Controllers\Trazabilidad\CultivoController;
 use App\Http\Controllers\Trazabilidad\UnidadMedidaController;
 use App\Http\Controllers\Trazabilidad\CosechaController;
+use App\Http\Controllers\Finanzas\SalarioController;
 use App\Http\Controllers\Usuarios\UserController;
 use App\Http\Controllers\Usuarios\RolesController;
 use App\Http\Middleware\IsAdmin;
@@ -150,7 +151,20 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::put('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'update'])
         ->name('unidad-medidas.update');
     Route::delete('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'destroy'])
-        ->name('unidad-medidas.destroy');           
+        ->name('unidad-medidas.destroy');
+    // Salarios
+    Route::get('salarios', [SalarioController::class, 'index'])
+        ->name('salarios.index');
+    Route::get('salarios/actuales', [SalarioController::class, 'actuales'])
+        ->name('salarios.actuales');
+    Route::get('salarios/{salario}', [SalarioController::class, 'show'])
+        ->name('salarios.show');
+    Route::post('salarios', [SalarioController::class, 'store'])
+        ->name('salarios.store')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::put('salarios/{salario}', [SalarioController::class, 'update'])
+        ->name('salarios.update')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::delete('salarios/{salario}', [SalarioController::class, 'destroy'])
+        ->name('salarios.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);               
     // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
     Route::middleware(IsAdmin::class)->group(function () {
         // Insumos
