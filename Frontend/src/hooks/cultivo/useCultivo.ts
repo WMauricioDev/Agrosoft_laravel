@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { Cultivo } from "@/types/cultivo/Cultivo";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/cultivo/cultivos/`;
+const API_URL = `${BASE_URL}/api/cultivos/`;
 
 const fetchCultivos = async (mostrarInactivos = false): Promise<Cultivo[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   const params = mostrarInactivos ? { activo: "false" } : {};
@@ -19,7 +19,7 @@ const fetchCultivos = async (mostrarInactivos = false): Promise<Cultivo[]> => {
 }
 
 const registrarCultivo = async (cultivo: Cultivo) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
 
     if (!token) {
         throw new Error("No se encontró el token de autenticación.");
@@ -81,7 +81,7 @@ export const useRegistrarCultivo = () => {
 };
 
 const actualizarCultivo = async (id: number, cultivo: any) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
     try {
@@ -124,7 +124,7 @@ const actualizarCultivo = async (id: number, cultivo: any) => {
   };
     
   const eliminarCultivo = async (id: number) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
     return api.delete(`${API_URL}${id}/`, {

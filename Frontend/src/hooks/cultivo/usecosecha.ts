@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { Cosecha } from "@/types/cultivo/Cosecha"; 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/cultivo/cosechas/`;
+const API_URL = `${BASE_URL}/api/cosechas/`;
 
 const fetchCosechas = async (): Promise<Cosecha[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
@@ -16,13 +16,13 @@ const fetchCosechas = async (): Promise<Cosecha[]> => {
 };
 
 const registrarCosecha = async (cosecha: Cosecha) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   const formData = new FormData();
-  formData.append("id_cultivo", cosecha.id_cultivo.toString());
+  formData.append("cultivo_id", cosecha.cultivo_id.toString());
   formData.append("cantidad", cosecha.cantidad.toString());
-  formData.append("unidades_de_medida", cosecha.unidades_de_medida.toString());
+  formData.append("unidad_medida_id", cosecha.unidad_medida_id.toString());
   formData.append("fecha", cosecha.fecha);
 
   return api.post(API_URL, formData, {
@@ -34,13 +34,13 @@ const registrarCosecha = async (cosecha: Cosecha) => {
 };
 
 const actualizarCosecha = async (id: number, cosecha: Cosecha) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   const formData = new FormData();
-  formData.append("id_cultivo", cosecha.id_cultivo.toString());
+  formData.append("cultivo_id", cosecha.cultivo_id.toString());
   formData.append("cantidad", cosecha.cantidad.toString());
-  formData.append("unidades_de_medida", cosecha.unidades_de_medida.toString());
+  formData.append("unidad_medida_id", cosecha.unidad_medida_id.toString());
   formData.append("fecha", cosecha.fecha);
 
   return api.put(`${API_URL}${id}/`, formData, {
@@ -52,7 +52,7 @@ const actualizarCosecha = async (id: number, cosecha: Cosecha) => {
 };
 
 const eliminarCosecha = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {

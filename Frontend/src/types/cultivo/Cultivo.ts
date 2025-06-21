@@ -1,9 +1,9 @@
 export interface Cultivo {
   id?: number;
-  Especie: number; 
-  Bancal: number; 
+  especie_id: number; 
+  bancal_id: number; 
   nombre: string;
-  unidad_de_medida: number;
+  unidad_medida_id: number;
   activo: boolean;
-  fechaSiembra: string; 
+  fecha_siembra: string; 
 }

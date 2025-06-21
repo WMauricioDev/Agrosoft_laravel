@@ -1,8 +1,8 @@
 export interface Cosecha {
     id?: number; 
     cultivo_nombre: string;
-    id_cultivo: number; 
+    cultivo_id: number; 
     cantidad: number; 
-    unidades_de_medida: number; 
+    unidad_medida_id: number; 
     fecha: string;
   }

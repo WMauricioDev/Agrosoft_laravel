@@ -7,6 +7,9 @@ use App\Http\Controllers\Trazabilidad\LoteController;
 use App\Http\Controllers\Trazabilidad\BancalController;
 use App\Http\Controllers\Trazabilidad\TipoEspecieController;
 use App\Http\Controllers\Trazabilidad\EspecieController;
+use App\Http\Controllers\Trazabilidad\CultivoController;
+use App\Http\Controllers\Trazabilidad\UnidadMedidaController;
+use App\Http\Controllers\Trazabilidad\CosechaController;
 use App\Http\Controllers\Usuarios\UserController;
 use App\Http\Controllers\Usuarios\RolesController;
 use App\Http\Middleware\IsAdmin;
@@ -114,7 +117,40 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::put('especies/{especie}', [EspecieController::class, 'update'])
         ->name('especies.update');
     Route::delete('especies/{especie}', [EspecieController::class, 'destroy'])
-        ->name('especies.destroy');   
+        ->name('especies.destroy');
+    // Cultivos
+    Route::get('cultivos', [CultivoController::class, 'index'])
+        ->name('cultivos.index');
+    Route::get('cultivos/{cultivo}', [CultivoController::class, 'show'])
+        ->name('cultivos.show');
+    Route::post('cultivos', [CultivoController::class, 'store'])
+        ->name('cultivos.store');
+    Route::put('cultivos/{cultivo}', [CultivoController::class, 'update'])
+        ->name('cultivos.update');
+    Route::delete('cultivos/{cultivo}', [CultivoController::class, 'destroy'])
+        ->name('cultivos.destroy');
+    // Cosechas
+    Route::get('cosechas', [CosechaController::class, 'index'])
+        ->name('cosechas.index');
+    Route::get('cosechas/{cosecha}', [CosechaController::class, 'show'])
+        ->name('cosechas.show');
+    Route::post('cosechas', [CosechaController::class, 'store'])
+        ->name('cosechas.store');
+    Route::put('cosechas/{cosecha}', [CosechaController::class, 'update'])
+        ->name('cosechas.update');
+    Route::delete('cosechas/{cosecha}', [CosechaController::class, 'destroy'])
+        ->name('cosechas.destroy');    
+    // Unidades de Medida
+    Route::get('unidad-medidas', [UnidadMedidaController::class, 'index'])
+        ->name('unidad-medidas.index');
+    Route::get('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'show'])
+        ->name('unidad-medidas.show');
+    Route::post('unidad-medidas', [UnidadMedidaController::class, 'store'])
+        ->name('unidad-medidas.store');
+    Route::put('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'update'])
+        ->name('unidad-medidas.update');
+    Route::delete('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'destroy'])
+        ->name('unidad-medidas.destroy');           
     // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
     Route::middleware(IsAdmin::class)->group(function () {
         // Insumos
