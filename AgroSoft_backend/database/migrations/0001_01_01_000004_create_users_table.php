@@ -37,7 +37,7 @@ Schema::create('users', function (Blueprint $table) {
          'password' => Hash::make('admin'),
          'estado' => true,
          'rol_id' => 4, 
-         
+        
         'created_at' => now(),
         'updated_at' => now(),
     ]);

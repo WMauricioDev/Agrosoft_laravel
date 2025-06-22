@@ -49,12 +49,12 @@ const UsuariosSecondPage: React.FC = () => {
     // Validar número de documento entre 7 y 19 dígitos
     if (
       usuario.numero_documento <= 0 ||
-      numeroStr.length < 7 ||
+      numeroStr.length < 6 ||
       numeroStr.length > 19
     ) {
       addToast({
         title: "Error",
-        description: "El número de documento debe tener entre 7 y 19 dígitos.",
+        description: "El número de documento debe tener entre 6 y 19 dígitos.",
         timeout: 3000,
         color: "danger",
       });
