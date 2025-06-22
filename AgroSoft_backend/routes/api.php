@@ -34,6 +34,9 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('users.index');
     // Traer los roles
     Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
+    Route::patch('/user/{user}', [UserController::class, 'update']);
+    Route::post('/user/secondRegister', [UserController::class, 'store']);
+
 
 
 

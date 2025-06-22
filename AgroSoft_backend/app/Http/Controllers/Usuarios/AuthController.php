@@ -54,10 +54,29 @@ public function login(LoginRequest $request): JsonResponse
     $credentials['numero_documento'] = (string) $credentials['numero_documento'];
 
     try {
-        if (! $token = auth('api')->attempt($credentials)) {
+        // Buscar usuario manualmente para verificar su estado
+        $user = User::where('numero_documento', $credentials['numero_documento'])->first();
+
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Credenciales inválidas.',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Verificar si el usuario está inactivo
+        if (! $user->estado) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Este usuario está inactivo.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        // Autenticar (ya validado)
+        if (! $token = auth('api')->attempt($credentials)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo autenticar al usuario.',
             ], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -77,7 +96,6 @@ public function login(LoginRequest $request): JsonResponse
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
-
     public function getUser(): JsonResponse
     {
         try {
