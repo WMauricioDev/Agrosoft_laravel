@@ -17,7 +17,7 @@ class SalarioController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:sanctum', IsAdmin::class, IsUserAuth::class])->except(['index', 'show', 'actuales']);
+        $this->middleware(['auth:api', IsAdmin::class, IsUserAuth::class])->except(['index', 'show', 'actuales']);
     }
 
     /**
@@ -124,7 +124,6 @@ class SalarioController extends Controller
             'rol_id',
             'fecha_de_implementacion',
             'valor_jornal',
-            'activo',
         ]));
         $salario->load('rol');
         return response()->json([

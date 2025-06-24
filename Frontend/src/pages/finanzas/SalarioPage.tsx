@@ -5,13 +5,12 @@ import { Salario } from "@/types/finanzas/Salario";
 import { useRegistrarSalario } from "@/hooks/finanzas/useSalario";
 import Formulario from "@/components/globales/Formulario";
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
-
 const SalarioPage: React.FC = () => {
   const [salario, setSalario] = useState<Salario>({
     id: 0,
     rol_id: 0,
     fecha_de_implementacion: "",
-    valorJornal: 0,
+    valor_jornal: 0,
     activo: true
   });
 
@@ -32,12 +31,12 @@ const SalarioPage: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
-    if (name === "valorJornal") {
+    if (name === "valor_jornal") {
       const formattedValue = formatColombianNumber(value);
       setDisplayValue(formattedValue);
       setSalario(prev => ({
         ...prev,
-        valorJornal: parseColombianNumber(formattedValue)
+        valor_jornal: parseColombianNumber(formattedValue)
       }));
     } else {
       setSalario(prev => ({
@@ -55,7 +54,7 @@ const SalarioPage: React.FC = () => {
           id: 0, 
           rol_id: 0,
           fecha_de_implementacion: "", 
-          valorJornal: 0,
+          valor_jornal: 0,
           activo: true
         });
         setDisplayValue("");
@@ -86,7 +85,7 @@ return (
         >
           {roles?.map((rol) => (
             <option key={rol.id} value={rol.id}>
-              {rol.rol}
+              {rol.nombre}
             </option>
           ))}
         </select>
@@ -112,7 +111,7 @@ return (
         </label>
         <input
           type="text"
-          name="valorJornal"
+          name="valor_jornal"
           value={displayValue}
           onChange={handleChange}
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
