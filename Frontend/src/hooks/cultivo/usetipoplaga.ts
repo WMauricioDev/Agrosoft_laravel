@@ -5,10 +5,10 @@ import { TipoPlaga } from "@/types/cultivo/TipoPlaga";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/cultivo/tipo_plaga/`;
+const API_URL = `${BASE_URL}/api/tipo-plaga/`;
 
 const fetchTipoPlagas = async (): Promise<TipoPlaga[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
@@ -17,7 +17,7 @@ const fetchTipoPlagas = async (): Promise<TipoPlaga[]> => {
 };
 
 const registrarTipoPlaga = async (tipoPlaga: TipoPlaga) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   const formData = new FormData();
@@ -36,7 +36,7 @@ const registrarTipoPlaga = async (tipoPlaga: TipoPlaga) => {
 };
 
 const actualizarTipoPlaga = async (id: number, tipoPlaga: TipoPlaga) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.put(`${API_URL}${id}/`, tipoPlaga, {
@@ -45,7 +45,7 @@ const actualizarTipoPlaga = async (id: number, tipoPlaga: TipoPlaga) => {
 };
 
 const eliminarTipoPlaga = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {
