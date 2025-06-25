@@ -13,10 +13,12 @@ use App\Http\Controllers\Trazabilidad\CosechaController;
 use App\Http\Controllers\Finanzas\SalarioController;
 use App\Http\Controllers\Usuarios\UserController;
 use App\Http\Controllers\Usuarios\RolesController;
+use App\Http\Controllers\Usuarios\ImportUsuarioController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUserAuth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Trazabilidad\TipoControlController;
+
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
@@ -44,6 +46,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
     Route::patch('/user/{user}', [UserController::class, 'update']);
     Route::post('/user/secondRegister', [UserController::class, 'store']);
+    Route::post('/user/masivRegister', [ImportUsuarioController::class, 'importar']);
 
 
 
