@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class IsUserAuth
 {
@@ -15,11 +16,26 @@ class IsUserAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth('api')->user()) {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (! $user) {
+                return response()->json([
+                    'message' => 'No autorizado: token inválido',
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+
+            if (! $user->estado) {
+                return response()->json([
+                    'message' => 'Usuario inactivo. Acceso denegado.',
+                ], Response::HTTP_FORBIDDEN);
+            }
+
             return $next($request);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error de autenticación: ' . $e->getMessage(),
+            ], Response::HTTP_UNAUTHORIZED);
         }
-        return response()->json([
-            'message'       =>      'No autorizado'
-        ]);
     }
 }

@@ -15,9 +15,12 @@ return new class extends Migration
     {
 Schema::create('users', function (Blueprint $table) {
     $table->id();
-    $table->string('name');
-    $table->unsignedBigInteger('rol_id')->default(4);
+    $table->string('nombre');
+    $table->string("apellido");
+    $table->unsignedBigInteger('rol_id')->default(1);
     $table->string('email')->unique();
+    $table->unsignedBigInteger('numero_documento')->unique();
+    $table->boolean('estado')->default(true); 
     $table->string('password');
     $table->rememberToken();
     $table->timestamps();
@@ -27,10 +30,14 @@ Schema::create('users', function (Blueprint $table) {
 });
 
         DB::table('users')->insert([
-        'name' => 'Adminer',
-        'email' => 'admin@gmail.com',
-        'password' => Hash::make('123456'),
-        'rol_id' => 1,  
+         'nombre' => 'Adminer',
+         'apellido'=>'userauth',
+         'email' => 'admin@gmail.com',
+         'numero_documento'=> 123456,
+         'password' => Hash::make('admin'),
+         'estado' => true,
+         'rol_id' => 4, 
+        
         'created_at' => now(),
         'updated_at' => now(),
     ]);
