@@ -22,6 +22,8 @@ use App\Http\Controllers\Inventario\TipoInsumoController;
 use App\Http\Controllers\Inventario\InsumoController;
 use App\Http\Controllers\Inventario\BodegaInsumoController;
 use App\Http\Controllers\Inventario\PrecioProductoController;
+use App\Http\Controllers\Inventario\HerramientaController;
+use App\Http\Controllers\Inventario\BodegaHerramientaController;
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
@@ -243,7 +245,31 @@ Route::middleware(IsUserAuth::class)->group(function () {
        Route::put('precio-producto/{precioProducto}', [PrecioProductoController::class, 'update'])
             ->name('precio-producto.update');
         Route::delete('precio-producto/{precioProducto}', [PrecioProductoController::class, 'destroy'])
-            ->name('precio-producto.destroy');                
+            ->name('precio-producto.destroy');
+            
+        // Herramientas
+        Route::get('herramientas', [HerramientaController::class, 'index'])
+            ->name('herramientas.index');
+        Route::get('herramientas/{herramienta}', [HerramientaController::class, 'show'])
+            ->name('herramientas.show');
+        Route::post('herramientas', [HerramientaController::class, 'store'])
+            ->name('herramientas.store');
+        Route::put('herramientas/{herramienta}', [HerramientaController::class, 'update'])
+            ->name('herramientas.update');
+        Route::delete('herramientas/{herramienta}', [HerramientaController::class, 'destroy'])
+            ->name('herramientas.destroy');
+
+           // Bodega Herramientas
+        Route::get('bodega_herramienta', [BodegaHerramientaController::class, 'index'])
+            ->name('bodega_herramienta.index');
+        Route::post('bodega_herramienta', [BodegaHerramientaController::class, 'store'])
+            ->name('bodega_herramienta.store');
+        Route::get('bodega_herramienta/{bodegaHerramienta}', [BodegaHerramientaController::class, 'show'])
+            ->name('bodega_herramienta.show');
+        Route::put('bodega_herramienta/{bodegaHerramienta}', [BodegaHerramientaController::class, 'update'])
+            ->name('bodega_herramienta.update');
+        Route::delete('bodega_herramienta/{bodegaHerramienta}', [BodegaHerramientaController::class, 'destroy'])
+            ->name('bodega_herramienta.destroy');
     
     // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
     Route::middleware(IsAdmin::class)->group(function () {
