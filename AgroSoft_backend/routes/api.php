@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Usuarios\AuthController;
-use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\Trazabilidad\TipoActividadController;
 use App\Http\Controllers\Trazabilidad\LoteController;
 use App\Http\Controllers\Trazabilidad\BancalController;
@@ -17,6 +16,11 @@ use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUserAuth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Trazabilidad\TipoControlController;
+use App\Http\Controllers\Inventario\BodegaController;
+use App\Http\Controllers\Inventario\TipoInsumoController;
+use App\Http\Controllers\Inventario\InsumoController;
+use App\Http\Controllers\Inventario\BodegaInsumoController;
+use App\Http\Controllers\Inventario\PrecioProductoController;
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
@@ -31,19 +35,16 @@ Route::get('elementos', [InsumoController::class, 'index'])
     ->name('elementos.index');
 
 // ── RUTAS PROTEGIDAS (Usuario autenticado) ───────────────────────────────────
-        // Usuarios
 Route::middleware(IsUserAuth::class)->group(function () {
-   // Información del propio usuario
+    // Información del propio usuario
     Route::get('user/me', [AuthController::class, 'getUser'])
         ->name('auth.user');
     // Traer usuario por ID
     Route::get('user/{user}', [UserController::class, 'show'])->name('users.show');    
-     // Traer todos los usuarios
+    // Traer todos los usuarios
     Route::get('user', [UserController::class, 'index'])->name('users.index');
     // Traer los roles
     Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
-
-
 
     // Cerrar sesión
     Route::post('logout', [AuthController::class, 'logout'])
@@ -53,7 +54,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh'])
         ->name('auth.refresh');
 
-        // Trazabilidad
+    // Trazabilidad
     // Listado abierto de tipos de actividad
     Route::get('tipo-actividades', [TipoActividadController::class, 'index'])
         ->name('tipo-actividades.index');
@@ -61,19 +62,19 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('tipo-actividades/{tipoActividad}', [TipoActividadController::class, 'show'])
         ->name('tipo-actividades.show');
     Route::post('tipo-actividades', [TipoActividadController::class, 'store'])
-            ->name('tipo-actividades.store');
+        ->name('tipo-actividades.store');
     Route::put('tipo-actividades/{tipoActividad}', [TipoActividadController::class, 'update'])
-            ->name('tipo-actividades.update');
+        ->name('tipo-actividades.update');
     Route::delete('tipo-actividades/{tipoActividad}', [TipoActividadController::class, 'destroy'])
-            ->name('tipo-actividades.destroy');    
-  // Traer y registrar tipo de control
+        ->name('tipo-actividades.destroy');    
+    // Traer y registrar tipo de control
     Route::apiResource('tipo_control', TipoControlController::class);
 
     Route::get('/tipo_control/{id}', [TipoControlController::class, 'show']);
     Route::put('/tipo_control/{id}', [TipoControlController::class, 'update']);
     Route::delete('/tipo_control/{id}', [TipoControlController::class, 'destroy']);
 
-    //Lotes
+    // Lotes
     Route::get('lotes', [LoteController::class, 'index'])
         ->name('lotes.index');
     Route::get('lotes/{lote}', [LoteController::class, 'show'])
@@ -85,7 +86,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::delete('lotes/{lote}', [LoteController::class, 'destroy'])
         ->name('lotes.destroy');
         
-    //Bancal
+    // Bancal
     Route::get('Bancal', [BancalController::class, 'index'])
         ->name('Bancal.index');
     Route::get('Bancal/{bancal}', [BancalController::class, 'show'])
@@ -96,6 +97,24 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('Bancal.update');
     Route::delete('Bancal/{bancal}', [BancalController::class, 'destroy'])
         ->name('Bancal.destroy');
+
+    // Bodegas
+    Route::get('bodegas', [BodegaController::class, 'index'])
+        ->name('bodegas.index');
+    Route::get('bodegas/{bodega}', [BodegaController::class, 'show'])
+        ->name('bodegas.show');
+    Route::post('bodegas', [BodegaController::class, 'store'])
+        ->name('bodegas.store');
+    Route::put('bodegas/{bodega}', [BodegaController::class, 'update'])
+        ->name('bodegas.update');
+    Route::delete('bodegas/{bodega}', [BodegaController::class, 'destroy'])
+        ->name('bodegas.destroy');
+
+    // Tipo Insumos
+    Route::get('tipo-insumos', [TipoInsumoController::class, 'index'])
+        ->name('tipo-insumos.index');
+    Route::get('tipo-insumos/{tipoInsumo}', [TipoInsumoController::class, 'show'])
+        ->name('tipo-insumos.show');
 
     // Tipo Especies
     Route::get('tipo-especies', [TipoEspecieController::class, 'index'])
@@ -108,7 +127,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('tipo-especies.update');
     Route::delete('tipo-especies/{tipoEspecie}', [TipoEspecieController::class, 'destroy'])
         ->name('tipo-especies.destroy');
-     // Especies
+    // Especies
     Route::get('especies', [EspecieController::class, 'index'])
         ->name('especies.index');
     Route::get('especies/{especie}', [EspecieController::class, 'show'])
@@ -164,10 +183,18 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::put('salarios/{salario}', [SalarioController::class, 'update'])
         ->name('salarios.update')->middleware([IsAdmin::class, IsUserAuth::class]);
     Route::delete('salarios/{salario}', [SalarioController::class, 'destroy'])
-        ->name('salarios.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);               
-    // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
-    Route::middleware(IsAdmin::class)->group(function () {
-        // Insumos
+        ->name('salarios.destroy')->middleware([IsAdmin::class, IsUserAuth::class]); 
+        
+     // Tipo Insumos
+        Route::post('tipo-insumos', [TipoInsumoController::class, 'store'])
+            ->name('tipo-insumos.store');
+        Route::put('tipo-insumos/{tipoInsumo}', [TipoInsumoController::class, 'update'])
+            ->name('tipo-insumos.update');
+        Route::delete('tipo-insumos/{tipoInsumo}', [TipoInsumoController::class, 'destroy'])
+            ->name('tipo-insumos.destroy');
+     // Insumos
+        Route::get('insumos', [InsumoController::class, 'index'])
+        ->name('insumos.index');
         Route::post('insumos', [InsumoController::class, 'store'])
             ->name('insumos.store');
         Route::get('insumos/{insumos}', [InsumoController::class, 'show'])
@@ -176,7 +203,34 @@ Route::middleware(IsUserAuth::class)->group(function () {
             ->name('insumos.update');
         Route::delete('insumos/{elemento}', [InsumoController::class, 'destroy'])
             ->name('insumos.destroy');
+     // Bodega Insumos
+        Route::get('bodega_insumo', [BodegaInsumoController::class, 'index'])
+            ->name('bodega_insumo.index');
+        Route::post('bodega_insumo', [BodegaInsumoController::class, 'store'])
+                ->name('bodega_insumo.store');
+        Route::get('bodega_insumo/{bodega_insumo}', [BodegaInsumoController::class, 'show'])
+            ->name('bodega_insumo.show');
+        Route::put('bodega_insumo/{bodega_insumo}', [BodegaInsumoController::class, 'update'])
+            ->name('bodega_insumo.update');
+        Route::delete('bodega_insumo/{bodega_insumo}', [BodegaInsumoController::class, 'destroy'])
+            ->name('bodega_insumo.destroy');
+     // Precio Producto
+        Route::get('precio-producto', [PrecioProductoController::class, 'index'])
+            ->name('precio-producto.index');
+        Route::post('precio-producto', [PrecioProductoController::class, 'store'])
+                ->name('precio-producto.store');
+        Route::get('precio-producto/{precioProducto}', [PrecioProductoController::class, 'show'])
+            ->name('precio-producto.show');
+       Route::put('precio-producto/{precioProducto}', [PrecioProductoController::class, 'update'])
+            ->name('precio-producto.update');
+        Route::delete('precio-producto/{precioProducto}', [PrecioProductoController::class, 'destroy'])
+            ->name('precio-producto.destroy');                
+    
+    // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
+    Route::middleware(IsAdmin::class)->group(function () {
+       
 
+       
         // Tipos de actividad
         //Route::post('tipo-actividades', [TipoActividadController::class, 'store'])
             //->name('tipo-actividades.store');

@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/inventario/precio-producto/`;
+const API_URL = `${BASE_URL}/api/precio-producto/`;
 
 const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
@@ -48,7 +48,7 @@ export const usePreciosProductos = () => {
 };
 
 const fetchUnidadesMedida = async (): Promise<UnidadMedida[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     const response = await api.get(`${API_URL}unidades_medida/`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -69,7 +69,7 @@ const registrarPrecioProducto = async (
         unidad_medida_id?: number;
     }
 ) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     if (!precioProducto.unidad_medida_id) {
         throw new Error("Debe seleccionar una unidad de medida válida.");
@@ -141,7 +141,7 @@ const actualizarPrecioProducto = async (
     id: number,
     precioProducto: PrecioProducto
 ) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     try {
         const data = {
@@ -213,7 +213,7 @@ export const useActualizarPrecioProducto = () => {
 };
 
 const eliminarPrecioProducto = async (id: number) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     try {
         const response = await api.delete(`${API_URL}${id}/`, {
@@ -272,7 +272,7 @@ export const useEliminarPrecioProducto = () => {
 const crearUnidadMedida = async (
     unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">
 ) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     try {
         const response = await api.post(
