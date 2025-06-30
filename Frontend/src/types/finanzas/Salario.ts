@@ -6,8 +6,8 @@ export interface Salario {
     nombre: string;
   };
   fecha_de_implementacion: string;
-  valorJornal: number;
+  valor_jornal: number;
   activo: boolean;
-  valorJornalFormatted?: string; 
+  valor_jornalFormatted?: string; 
   rol_nombre?: string;
 }

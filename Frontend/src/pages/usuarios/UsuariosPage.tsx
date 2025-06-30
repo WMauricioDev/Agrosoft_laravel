@@ -43,6 +43,8 @@ const UsuariosPage: React.FC = () => {
     rol_id: 1, // Por defecto "Aprendiz"
   });
 
+
+
   // Cuando la data de API cambia, actualizamos el estado local para sincronizar
   useEffect(() => {
     setUsuariosLocal(usuariosAPI);
@@ -50,7 +52,10 @@ const UsuariosPage: React.FC = () => {
 
   if (!user || user.rol?.nombre.toLowerCase() !== "administrador") {
     return <Navigate to="/perfil" replace />;
+    
   }
+
+  
 
   const columns = [
     { name: "Nombre", uid: "nombre" },
@@ -111,14 +116,13 @@ const UsuariosPage: React.FC = () => {
       apellido: usuario.apellido,
       email: usuario.email,
       numero_documento: usuario.numero_documento,
-      username: usuario.username || "N/A",
-      is_staff: usuario.is_staff, // ✅ esto faltaba
+      estado: usuario.estado,
       rol: usuario.rol.nombre || "Sin rol",
     estado: (
 <Switcher
   size="sm"
-  isSelected={usuario.is_staff}
-  color={usuario.is_staff ? "success" : "danger"}
+  isSelected={usuario.estado}
+  color={usuario.estado ? "success" : "danger"}
   onChange={(e) => {
     const nuevoValor = e.target.checked;
     toggleStaff.mutate(
@@ -127,7 +131,7 @@ const UsuariosPage: React.FC = () => {
         onSuccess: () => {
           setUsuariosLocal((prev) =>
             prev.map((u) =>
-              u.id === usuario.id ? { ...u, is_staff: nuevoValor } : u
+              u.id === usuario.id ? { ...u, estado: nuevoValor } : u
             )
           );
           addToast({
@@ -244,14 +248,6 @@ const UsuariosPage: React.FC = () => {
             })
           }
         />
-        <ReuInput
-          label="Nombre de Usuario"
-          type="text"
-          value={selectedUsuario?.username || ""}
-          onChange={(e) =>
-            setSelectedUsuario({ ...selectedUsuario, username: e.target.value })
-          }
-        />
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700">Rol</label>
           <select
@@ -264,12 +260,12 @@ const UsuariosPage: React.FC = () => {
               })
             }
           >
-            <option value="">Seleccione un rol</option>
-            {roles?.map((rol) => (
-              <option key={rol.id} value={rol.id}>
-                {rol.rol}
-              </option>
-            ))}
+          <option value="">Seleccione un rol</option>
+          {roles?.map((rol) => (
+            <option key={rol.id} value={rol.id}>
+              {rol.nombre}
+            </option> 
+          ))}
           </select>
         </div>
       </ReuModal>
@@ -329,7 +325,7 @@ const UsuariosPage: React.FC = () => {
           >
             {roles?.map((rol) => (
               <option key={rol.id} value={rol.id}>
-                {rol.rol}
+                {rol.nombre}
               </option>
             ))}
           </select>

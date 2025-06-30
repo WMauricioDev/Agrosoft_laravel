@@ -7,6 +7,9 @@ import ReuModal from "@/components/globales/ReuModal";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
+import Switcher from "@/components/switch";
+import { useToggleEstadoSalario } from "@/hooks/finanzas/useSalario";
+
 
 const SalarioInput = ({
   label,
@@ -22,6 +25,7 @@ const SalarioInput = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.replace(/[^\d]/g, '');
     const formattedValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
     onChange(formattedValue);
   };
 
@@ -47,9 +51,11 @@ const ListaSalarioPage: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { data: salarios, isLoading, refetch } = useSalarios();
+  console.log("✅ salarios crudos:", salarios);
   const { roles } = useUsuarios();
   const updateMutation = useActualizarSalario();
   const deleteMutation = useEliminarSalario();
+  const toggleEstadoSalario = useToggleEstadoSalario();
   const navigate = useNavigate();
 
   const formatColombianNumber = (value: number): string => {
@@ -58,7 +64,7 @@ const ListaSalarioPage: React.FC = () => {
 
   const handleEdit = (salario: Salario) => {
     setSelectedSalario(salario);
-    setDisplayValue(formatColombianNumber(salario.valorJornal));
+    setDisplayValue(formatColombianNumber(salario.valor_jornal));
     setIsEditModalOpen(true);
   };
 
@@ -80,12 +86,37 @@ const ListaSalarioPage: React.FC = () => {
 
 const transformedData = salarios?.map((salario) => {
 
-  return {
+ return {
     id: salario.id.toString(),
     rol: salario.rol_nombre || salario.rol?.nombre || 'Sin rol',
     fecha_de_implementacion: new Date(salario.fecha_de_implementacion).toLocaleDateString(),
-    valorJornal: `$${formatColombianNumber(salario.valorJornal)}`,
-    estado: salario.activo ? 'Activo' : 'Inactivo',
+    valor_jornal: `$${formatColombianNumber(salario.valor_jornal)}`,
+    // estado: (
+    //   <Switcher
+    //     size="sm"
+    //     isSelected={salario.activo}
+    //     color={salario.activo ? "success" : "danger"}
+    //     onChange={(e) => {
+    //       const nuevoValor = e.target.checked;
+    //       toggleEstadoSalario.mutate(
+    //         { id: salario.id, nuevoValor },
+    //         {
+    //           onSuccess: () => {
+    //             refetch(); // 🔄 Refresca la lista
+    //           },
+    //           onError: () => {
+    //             addToast({
+    //               title: "Error",
+    //               description: "No se pudo actualizar el estado del salario.",
+    //               timeout: 3000,
+    //               color: "danger",
+    //             });
+    //           },
+    //         }
+    //       );
+    //     }}
+    //   />
+    // ),
     acciones: (
       <div className="flex space-x-2">
         <button 
@@ -106,7 +137,6 @@ const transformedData = salarios?.map((salario) => {
     )
   };
 }) || [];
-
 
   return (
     <DefaultLayout>
@@ -129,8 +159,8 @@ const transformedData = salarios?.map((salario) => {
           columns={[
             { name: "Rol", uid: "rol" },
             { name: "Fecha Implementación", uid: "fecha_de_implementacion" },
-            { name: "Valor Jornal", uid: "valorJornal" },
-            { name: "Estado", uid: "estado" },
+            { name: "Valor Jornal", uid: "valor_jornal" },
+            // { name: "Estado", uid: "estado" },
             { name: "Acciones", uid: "acciones" }
           ]}
           data={transformedData}
@@ -171,7 +201,7 @@ const transformedData = salarios?.map((salario) => {
               >
                 {roles?.map((rol) => (
                   <option key={rol.id} value={rol.id}>
-                    {rol.rol}
+                    {rol.nombre}
                   </option>
                 ))}
               </select>
@@ -197,7 +227,7 @@ const transformedData = salarios?.map((salario) => {
                 setDisplayValue(value);
                 setSelectedSalario({
                   ...selectedSalario,
-                  valorJornal: Number(value.replace(/\./g, ''))
+                  valor_jornal: Number(value.replace(/\./g, ''))
                 });
               }}
               placeholder="Ej: 1.400.500"
@@ -233,7 +263,7 @@ const transformedData = salarios?.map((salario) => {
           <div className="mt-4 p-3 bg-gray-100 rounded">
             <p><strong>Rol:</strong> {selectedSalario.rol_nombre || 'Sin rol'}</p>
             <p><strong>Fecha:</strong> {new Date(selectedSalario.fecha_de_implementacion).toLocaleDateString()}</p>
-            <p><strong>Valor:</strong> ${formatColombianNumber(selectedSalario.valorJornal)}</p>
+            <p><strong>Valor:</strong> ${formatColombianNumber(selectedSalario.valor_jornal)}</p>
           </div>
         )}
       </ReuModal>

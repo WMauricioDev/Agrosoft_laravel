@@ -30,7 +30,7 @@ const TipoPlagaPage: React.FC = () => {
   return (
     <DefaultLayout>
       <Formulario
-      title=" Registro deTipo Plaga"
+      title=" Registro de Tipo Plaga"
         onSubmit={handleSubmit}
         isSubmitting={mutation.isPending}
         buttonText="Guardar"

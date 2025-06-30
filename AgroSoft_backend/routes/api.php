@@ -9,6 +9,7 @@ use App\Http\Controllers\Trazabilidad\EspecieController;
 use App\Http\Controllers\Trazabilidad\CultivoController;
 use App\Http\Controllers\Trazabilidad\UnidadMedidaController;
 use App\Http\Controllers\Trazabilidad\CosechaController;
+use App\Http\Controllers\Trazabilidad\TipoPlagaController;
 use App\Http\Controllers\Finanzas\SalarioController;
 use App\Http\Controllers\Usuarios\UserController;
 use App\Http\Controllers\Usuarios\RolesController;
@@ -45,6 +46,9 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('users.index');
     // Traer los roles
     Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
+    Route::patch('/user/{user}', [UserController::class, 'update']);
+    Route::post('/user/secondRegister', [UserController::class, 'store']);
+
 
     // Cerrar sesión
     Route::post('logout', [AuthController::class, 'logout'])
@@ -158,8 +162,11 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('cosechas.store');
     Route::put('cosechas/{cosecha}', [CosechaController::class, 'update'])
         ->name('cosechas.update');
-    Route::delete('cosechas/{cosecha}', [CosechaController::class, 'destroy'])
-        ->name('cosechas.destroy');    
+    Route::delete('cosechas/{cosecha}', [CosechaController::class, 'reportePdf'])
+        ->name('cosechas.destroy');
+    Route::get('cosechas/reporte/{pdf}', [CosechaController::class, 'reportePdf'])
+        ->name('reporte.reportePdf');
+
     // Unidades de Medida
     Route::get('unidad-medidas', [UnidadMedidaController::class, 'index'])
         ->name('unidad-medidas.index');
@@ -171,6 +178,18 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('unidad-medidas.update');
     Route::delete('unidad-medidas/{unidadMedida}', [UnidadMedidaController::class, 'destroy'])
         ->name('unidad-medidas.destroy');
+
+     // Tipo Plaga
+     Route::get('tipo-plaga', [TipoPlagaController::class, 'index'])
+     ->name('tipo-plaga.index');
+ Route::get('tipo-plaga/{tipoPlaga}', [TipoPlagaController::class, 'show'])
+     ->name('tipo-plaga.show');
+ Route::post('tipo-plaga', [TipoPlagaController::class, 'store'])
+     ->name('tipo-plaga.store');
+ Route::put('tipo-plaga/{tipoPlaga}', [TipoPlagaController::class, 'update'])
+     ->name('tipo-plaga.update');
+ Route::delete('tipo-plaga/{tipoPlaga}', [TipoPlagaController::class, 'destroy'])
+     ->name('tipo-plaga.destroy');
     // Salarios
     Route::get('salarios', [SalarioController::class, 'index'])
         ->name('salarios.index');
