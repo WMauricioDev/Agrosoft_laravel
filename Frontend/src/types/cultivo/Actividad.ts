@@ -1,22 +1,29 @@
-export interface Actividad {
-  id?: number;
-  tipo_actividad: number;
+export interface ActividadForm {
+  tipo_actividad_id: number;
   descripcion: string;
   fecha_inicio: string;
   fecha_fin: string;
+  cultivo_id: number;
+  estado: 'PENDIENTE' | 'EN_PROCESO' | 'COMPLETADA' | 'CANCELADA';
+  prioridad: 'ALTA' | 'MEDIA' | 'BAJA';
+  instrucciones_adicionales?: string;
   usuarios: number[];
-  cultivo: number;
-  estado: string;
-  prioridad: string;
-  instrucciones_adicionales: string;
-  insumos?: { insumo: number; cantidad_usada: number }[];
+  insumos?: { insumo_id: number; cantidad_usada: number }[];
   herramientas?: {
-    herramienta: number;
+    herramienta_id: number;
+    cantidad_entregada: number;
     entregada?: boolean;
     devuelta?: boolean;
     fecha_devolucion?: string | null;
   }[];
-  prestamos_insumos?: number[];
-  prestamos_herramientas?: number[]
-  usuarios_data?:number[]
+  prestamos_insumos?: { id: number; insumo_id: number; cantidad_usada: number; insumo_nombre?: string }[];
+  prestamos_herramientas?: {
+    id: number;
+    herramienta_id: number;
+    cantidad_entregada: number;
+    herramienta_nombre?: string;
+  }[];
+  usuarios_data?: { id: number; nombre: string }[];
+  tipo_actividad_nombre?: string;
+  cultivo_nombre?: string;
 }
