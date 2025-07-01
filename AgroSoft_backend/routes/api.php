@@ -24,7 +24,9 @@ use App\Http\Controllers\Inventario\BodegaInsumoController;
 use App\Http\Controllers\Inventario\PrecioProductoController;
 use App\Http\Controllers\Inventario\HerramientaController;
 use App\Http\Controllers\Inventario\BodegaHerramientaController;
-
+use App\Http\Controllers\Trazabilidad\ActividadesController;
+use App\Http\Controllers\Trazabilidad\PrestamoInsumoController;
+use App\Http\Controllers\Trazabilidad\PrestamoHerramientaController;
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
 Route::post('login', [AuthController::class, 'login'])
@@ -103,6 +105,43 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('Bancal.update');
     Route::delete('Bancal/{bancal}', [BancalController::class, 'destroy'])
         ->name('Bancal.destroy');
+    // Actividades
+    Route::get('actividades', [ActividadesController::class, 'index'])
+        ->name('actividades.index');
+    Route::get('actividades/{actividad}', [ActividadesController::class, 'show'])
+        ->name('actividades.show');
+    Route::post('actividades', [ActividadesController::class, 'store'])
+            ->name('actividades.store');
+    Route::put('actividades/{actividad}', [ActividadesController::class, 'update'])
+            ->name('actividades.update');
+    Route::delete('actividades/{actividad}', [ActividadesController::class, 'destroy'])
+            ->name('actividades.destroy');
+    Route::post('actividades/{actividad}/finalizar', [ActividadesController::class, 'finalizar'])
+            ->name('actividades.finalizar');
+
+     // Prestamos Insumos
+     Route::get('prestamos-insumos', [PrestamoInsumoController::class, 'index'])
+        ->name('prestamos-insumos.index');
+    Route::get('prestamos-insumos/{prestamoInsumo}', [PrestamoInsumoController::class, 'show'])
+        ->name('prestamos-insumos.show');
+    Route::post('prestamos-insumos', [PrestamoInsumoController::class, 'store'])
+            ->name('prestamos-insumos.store');
+    Route::put('prestamos-insumos/{prestamoInsumo}', [PrestamoInsumoController::class, 'update'])
+            ->name('prestamos-insumos.update');
+    Route::delete('prestamos-insumos/{prestamoInsumo}', [PrestamoInsumoController::class, 'destroy'])
+            ->name('prestamos-insumos.destroy');
+
+     // Prestamos Herramientas
+    Route::get('prestamos-herramientas', [PrestamoHerramientaController::class, 'index'])
+        ->name('prestamos-herramientas.index');
+    Route::get('prestamos-herramientas/{prestamoHerramienta}', [PrestamoHerramientaController::class, 'show'])
+        ->name('prestamos-herramientas.show'); 
+    Route::post('prestamos-herramientas', [PrestamoHerramientaController::class, 'store'])
+            ->name('prestamos-herramientas.store');
+    Route::put('prestamos-herramientas/{prestamoHerramienta}', [PrestamoHerramientaController::class, 'update'])
+            ->name('prestamos-herramientas.update');
+    Route::delete('prestamos-herramientas/{prestamoHerramienta}', [PrestamoHerramientaController::class, 'destroy'])
+            ->name('prestamos-herramientas.destroy');
 
     // Bodegas
     Route::get('bodegas', [BodegaController::class, 'index'])
