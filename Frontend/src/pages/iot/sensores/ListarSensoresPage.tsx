@@ -1,4 +1,3 @@
-// src/pages/sensores/ListarSensoresPage.tsx
 import { useState, useMemo, useEffect } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useSensores } from "@/hooks/iot/sensores/useSensores";
@@ -13,8 +12,7 @@ import GuideModal from "@/components/Iot/GuideModal";
 import { Sensor } from "@/types/iot/type";
 import { EditIcon, Trash2, HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import Switcher from "@/components/switch"; 
-import { addToast } from "@heroui/toast";
+import Switcher from "@/components/switch";
 
 export default function ListarSensoresPage() {
   const { sensores, isLoading, error } = useSensores();
@@ -26,10 +24,9 @@ export default function ListarSensoresPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
-  const [sensoresLocal, setSensoresLocal] = useState<Sensor[]>([]); // Estado local para actualizar UI
+  const [sensoresLocal, setSensoresLocal] = useState<Sensor[]>([]);
   const navigate = useNavigate();
 
-  // Sincronizar sensoresLocal con sensores de la API
   useEffect(() => {
     setSensoresLocal(sensores);
   }, [sensores]);
@@ -103,7 +100,7 @@ export default function ListarSensoresPage() {
               size="sm"
               isSelected={sensor.estado === "activo"}
               color={sensor.estado === "activo" ? "success" : "danger"}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const activo = e.target.checked;
                 console.log("[ListarSensoresPage] Cambiando estado del sensor: ", {
                   sensorId: sensor.id,
@@ -113,13 +110,11 @@ export default function ListarSensoresPage() {
                   { sensorId: sensor.id, activo },
                   {
                     onSuccess: () => {
-                      // Actualizar el estado local para reflejar el cambio en la UI
                       setSensoresLocal((prev) =>
                         prev.map((s) =>
                           s.id === sensor.id ? { ...s, estado: activo ? "activo" : "inactivo" } : s
                         )
                       );
-                      // El toast ya está manejado en useToggleSensor
                     },
                     onError: () => {
                       // El toast de error ya está manejado en useToggleSensor

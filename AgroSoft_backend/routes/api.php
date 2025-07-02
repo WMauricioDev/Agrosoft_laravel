@@ -25,9 +25,13 @@ use App\Http\Controllers\Inventario\BodegaInsumoController;
 use App\Http\Controllers\Inventario\PrecioProductoController;
 use App\Http\Controllers\Inventario\HerramientaController;
 use App\Http\Controllers\Inventario\BodegaHerramientaController;
+use App\Http\Controllers\Trazabilidad\PlagaController;
+use App\Http\Controllers\Trazabilidad\AfeccionController;
 use App\Http\Controllers\Trazabilidad\ActividadesController;
 use App\Http\Controllers\Trazabilidad\PrestamoInsumoController;
 use App\Http\Controllers\Trazabilidad\PrestamoHerramientaController;
+use App\Http\Controllers\Finanzas\PagoController;
+
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
 Route::post('login', [AuthController::class, 'login'])
@@ -233,6 +237,33 @@ Route::middleware(IsUserAuth::class)->group(function () {
      ->name('tipo-plaga.update');
  Route::delete('tipo-plaga/{tipoPlaga}', [TipoPlagaController::class, 'destroy'])
      ->name('tipo-plaga.destroy');
+
+    // Plagas
+    Route::get('plagas', [PlagaController::class, 'index'])
+        ->name('plagas.index');
+    Route::get('plagas/{plaga}', [PlagaController::class, 'show'])
+        ->name('plagas.show');
+    Route::post('plagas', [PlagaController::class, 'store'])
+        ->name('plagas.store');
+    Route::put('plagas/{plaga}', [PlagaController::class, 'update'])
+        ->name('plagas.update');
+    Route::delete('plagas/{plaga}', [PlagaController::class, 'destroy'])
+        ->name('plagas.destroy');
+
+    // Afecciones
+    Route::get('afecciones', [AfeccionController::class, 'index'])
+        ->name('afecciones.index');
+    Route::get('afecciones/{afeccion}', [AfeccionController::class, 'show'])
+        ->name('afecciones.show');
+    Route::post('afecciones', [AfeccionController::class, 'store'])
+        ->name('afecciones.store');
+    Route::patch('afecciones/{afeccion}', [AfeccionController::class, 'update'])
+        ->name('afecciones.update');
+    Route::post('afecciones/{afeccion}/cambiar_estado', [AfeccionController::class, 'cambiarEstado'])
+        ->name('afecciones.cambiar_estado');
+    Route::delete('afecciones/{afeccion}', [AfeccionController::class, 'destroy'])
+        ->name('afecciones.destroy');
+
     // Salarios
     Route::get('salarios', [SalarioController::class, 'index'])
         ->name('salarios.index');
@@ -246,7 +277,19 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('salarios.update')->middleware([IsAdmin::class, IsUserAuth::class]);
     Route::delete('salarios/{salario}', [SalarioController::class, 'destroy'])
         ->name('salarios.destroy')->middleware([IsAdmin::class, IsUserAuth::class]); 
-        
+    // Pagos
+    Route::get('pagos', [PagoController::class, 'index'])
+        ->name('pagos.index');
+    Route::get('pagos/{pago}', [PagoController::class, 'show'])
+        ->name('pagos.show');
+    Route::post('pagos', [PagoController::class, 'store'])
+        ->name('pagos.store')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::put('pagos/{pago}', [PagoController::class, 'update'])
+        ->name('pagos.update')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::delete('pagos/{pago}', [PagoController::class, 'destroy'])
+        ->name('pagos.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::post('pagos/calcular', [PagoController::class, 'calcular'])
+        ->name('pagos.calcular')->middleware([IsAdmin::class, IsUserAuth::class]);
      // Tipo Insumos
         Route::post('tipo-insumos', [TipoInsumoController::class, 'store'])
             ->name('tipo-insumos.store');

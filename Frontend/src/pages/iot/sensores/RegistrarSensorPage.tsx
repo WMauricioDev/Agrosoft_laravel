@@ -9,6 +9,12 @@ import { useBancales } from "@/hooks/cultivo/usebancal";
 import { addToast } from "@heroui/react";
 import Switcher from "@/components/switch";
 
+interface SensorConfiguration {
+  unidad_medida: string;
+  medida_minima: number;
+  medida_maxima: number;
+}
+
 const sensorTypes = [
   { value: "temperatura", label: "Temperatura (°C)", id: 1 },
   { value: "ambient_humidity", label: "Humedad Ambiente (%)", id: 2 },
@@ -20,7 +26,7 @@ const sensorTypes = [
   { value: "ph_suelo", label: "pH Suelo (pH)", id: 8 },
 ];
 
-const sensorConfigurations = {
+const sensorConfigurations: { [key: string]: SensorConfiguration } = {
   temperatura: { unidad_medida: "°C", medida_minima: -40, medida_maxima: 85 },
   ambient_humidity: { unidad_medida: "%", medida_minima: 0, medida_maxima: 100 },
   soil_humidity: { unidad_medida: "%", medida_minima: 0, medida_maxima: 100 },
@@ -216,7 +222,7 @@ const RegistrarSensorPage: React.FC = () => {
             size="sm"
             isSelected={sensor.estado === "activo"}
             color={sensor.estado === "activo" ? "success" : "danger"}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setSensor({
                 ...sensor,
                 estado: e.target.checked ? "activo" : "inactivo",

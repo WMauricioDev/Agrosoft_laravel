@@ -8,35 +8,35 @@ import { DataType, DataTypeSelectorProps } from "@/types/iot/iotmqtt";
 // Definir tipos de datos para selección
 const dataTypes: DataType[] = [
   {
-    label: "Temperatura (°C)",
+    nombre: "Temperatura (°C)",
     key: "temperatura",
     icon: <FaTemperatureHigh className="text-red-500" />,
     tipo_sensor: "temperatura",
     decimals: 2,
   },
   {
-    label: "Humedad Ambiente (%)",
+    nombre: "Humedad Ambiente (%)",
     key: "humedad_ambiente",
     icon: <FaTint className="text-blue-500" />,
     tipo_sensor: "humedad_ambiente",
     decimals: 1,
   },
   {
-    label: "Humedad Suelo (%)",
+    nombre: "Humedad Suelo (%)",
     key: "humedad_suelo",
     icon: <FaLeaf className="text-green-500" />,
     tipo_sensor: "humedad_suelo",
     decimals: 1,
   },
   {
-    label: "Calidad Aire (PPM)",
+    nombre: "Calidad Aire (PPM)",
     key: "calidad_aire",
     icon: <FaWind className="text-yellow-500" />,
     tipo_sensor: "calidad_aire",
     decimals: 0,
   },
   {
-    label: "Luminosidad (lux)",
+    nombre: "Luminosidad (lux)",
     key: "luminosidad",
     icon: <FaLightbulb className="text-amber-500" />,
     tipo_sensor: "luminosidad",
@@ -47,7 +47,7 @@ const dataTypes: DataType[] = [
 export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({ selectedDataType, setSelectedDataType }) => {
   return (
     <motion.div
-      className="bg-white rounded-xl shadow-md p-4 w-56 h-32 flex flex-col justify-center items-center"
+      className="bg-white rounded-lg shadow-md p-4 w-56 h-32 flex flex-col justify-center items-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -58,7 +58,7 @@ export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({ selectedData
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-blue-100 py-2 pl-3 pr-10 text-left text-gray-700 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:text-sm">
             <span className="flex items-center gap-2">
               {selectedDataType.icon}
-              {selectedDataType.label}
+              {selectedDataType.nombre}
             </span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon className="h-5 w-5 text-gray-500" />
@@ -77,7 +77,7 @@ export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({ selectedData
                   {({ selected }) => (
                     <>
                       <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
-                        <div className="flex items-center gap-2">{type.icon} {type.label}</div>
+                        <div className="flex items-center gap-2">{type.icon} {type.nombre}</div>
                       </span>
                       {selected && (
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">

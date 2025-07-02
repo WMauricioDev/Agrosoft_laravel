@@ -1,5 +1,5 @@
 import ReuModal from "@/components/globales/ReuModal";
-import {ReuInput} from "@/components/globales/ReuInput"; 
+import { ReuInput } from "@/components/globales/ReuInput"; 
 import { Sensor } from "@/types/iot/type";
 import { useBancales } from "@/hooks/cultivo/usebancal";
 import { useGetTipoSensores } from "@/hooks/iot/sensores/useGetTipoSensores";
@@ -12,7 +12,7 @@ interface ModalSensorProps {
   sensor: Sensor;  
   onConfirm: (editedSensor: Sensor | null) => void;
   isDelete?: boolean;
-}
+} 
 
 export const ModalSensor = ({ isOpen, onOpenChange, sensor, onConfirm, isDelete = false }: ModalSensorProps) => {
   const { data: bancales, isLoading: isLoadingBancales } = useBancales();
