@@ -26,6 +26,10 @@ use App\Http\Controllers\Inventario\HerramientaController;
 use App\Http\Controllers\Inventario\BodegaHerramientaController;
 use App\Http\Controllers\Trazabilidad\PlagaController;
 use App\Http\Controllers\Trazabilidad\AfeccionController;
+use App\Http\Controllers\Trazabilidad\ActividadesController;
+use App\Http\Controllers\Trazabilidad\PrestamoInsumoController;
+use App\Http\Controllers\Trazabilidad\PrestamoHerramientaController;
+use App\Http\Controllers\Finanzas\PagoController;
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
@@ -105,6 +109,43 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('Bancal.update');
     Route::delete('Bancal/{bancal}', [BancalController::class, 'destroy'])
         ->name('Bancal.destroy');
+    // Actividades
+    Route::get('actividades', [ActividadesController::class, 'index'])
+        ->name('actividades.index');
+    Route::get('actividades/{actividad}', [ActividadesController::class, 'show'])
+        ->name('actividades.show');
+    Route::post('actividades', [ActividadesController::class, 'store'])
+            ->name('actividades.store');
+    Route::put('actividades/{actividad}', [ActividadesController::class, 'update'])
+            ->name('actividades.update');
+    Route::delete('actividades/{actividad}', [ActividadesController::class, 'destroy'])
+            ->name('actividades.destroy');
+    Route::post('actividades/{actividad}/finalizar', [ActividadesController::class, 'finalizar'])
+            ->name('actividades.finalizar');
+
+     // Prestamos Insumos
+     Route::get('prestamos-insumos', [PrestamoInsumoController::class, 'index'])
+        ->name('prestamos-insumos.index');
+    Route::get('prestamos-insumos/{prestamoInsumo}', [PrestamoInsumoController::class, 'show'])
+        ->name('prestamos-insumos.show');
+    Route::post('prestamos-insumos', [PrestamoInsumoController::class, 'store'])
+            ->name('prestamos-insumos.store');
+    Route::put('prestamos-insumos/{prestamoInsumo}', [PrestamoInsumoController::class, 'update'])
+            ->name('prestamos-insumos.update');
+    Route::delete('prestamos-insumos/{prestamoInsumo}', [PrestamoInsumoController::class, 'destroy'])
+            ->name('prestamos-insumos.destroy');
+
+     // Prestamos Herramientas
+    Route::get('prestamos-herramientas', [PrestamoHerramientaController::class, 'index'])
+        ->name('prestamos-herramientas.index');
+    Route::get('prestamos-herramientas/{prestamoHerramienta}', [PrestamoHerramientaController::class, 'show'])
+        ->name('prestamos-herramientas.show'); 
+    Route::post('prestamos-herramientas', [PrestamoHerramientaController::class, 'store'])
+            ->name('prestamos-herramientas.store');
+    Route::put('prestamos-herramientas/{prestamoHerramienta}', [PrestamoHerramientaController::class, 'update'])
+            ->name('prestamos-herramientas.update');
+    Route::delete('prestamos-herramientas/{prestamoHerramienta}', [PrestamoHerramientaController::class, 'destroy'])
+            ->name('prestamos-herramientas.destroy');
 
     // Bodegas
     Route::get('bodegas', [BodegaController::class, 'index'])
@@ -234,7 +275,19 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('salarios.update')->middleware([IsAdmin::class, IsUserAuth::class]);
     Route::delete('salarios/{salario}', [SalarioController::class, 'destroy'])
         ->name('salarios.destroy')->middleware([IsAdmin::class, IsUserAuth::class]); 
-        
+    // Pagos
+    Route::get('pagos', [PagoController::class, 'index'])
+        ->name('pagos.index');
+    Route::get('pagos/{pago}', [PagoController::class, 'show'])
+        ->name('pagos.show');
+    Route::post('pagos', [PagoController::class, 'store'])
+        ->name('pagos.store')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::put('pagos/{pago}', [PagoController::class, 'update'])
+        ->name('pagos.update')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::delete('pagos/{pago}', [PagoController::class, 'destroy'])
+        ->name('pagos.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::post('pagos/calcular', [PagoController::class, 'calcular'])
+        ->name('pagos.calcular')->middleware([IsAdmin::class, IsUserAuth::class]);
      // Tipo Insumos
         Route::post('tipo-insumos', [TipoInsumoController::class, 'store'])
             ->name('tipo-insumos.store');
