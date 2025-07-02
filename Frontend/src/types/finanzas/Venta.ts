@@ -11,7 +11,7 @@ export interface DetalleVenta {
   venta?: number;
   producto: number; 
   cantidad: number;
-  unidades_de_medida: number; 
+  unidad_medidas: number; 
   total: number; 
   precio_unitario?: number; 
 }

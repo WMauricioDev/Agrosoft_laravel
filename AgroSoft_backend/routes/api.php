@@ -31,6 +31,7 @@ use App\Http\Controllers\Trazabilidad\ActividadesController;
 use App\Http\Controllers\Trazabilidad\PrestamoInsumoController;
 use App\Http\Controllers\Trazabilidad\PrestamoHerramientaController;
 use App\Http\Controllers\Finanzas\PagoController;
+use App\Http\Controllers\Finanzas\VentaController;
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
@@ -290,6 +291,9 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('pagos.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);
     Route::post('pagos/calcular', [PagoController::class, 'calcular'])
         ->name('pagos.calcular')->middleware([IsAdmin::class, IsUserAuth::class]);
+
+    // Venta
+        Route::resource('venta', VentaController::class)->only(['index', 'store']);
      // Tipo Insumos
         Route::post('tipo-insumos', [TipoInsumoController::class, 'store'])
             ->name('tipo-insumos.store');
