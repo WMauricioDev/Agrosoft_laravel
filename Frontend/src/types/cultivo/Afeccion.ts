@@ -18,10 +18,6 @@ export interface Afeccion {
     fecha_deteccion: string;
     gravedad: 'L' | 'M' | 'G';
     estado: 'AC' | 'ST' | 'EC' | 'EL';
-    reporte: {
-      id: number;
-      usuario: string;
-    } | null;
     plaga: {
       id: number;
       nombre: string;

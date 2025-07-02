@@ -5,10 +5,10 @@ import { Plaga } from "@/types/cultivo/Plaga";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/cultivo/plaga/`;
+const API_URL = `${BASE_URL}/api/plagas/`;
 
 const fetchPlagas = async (): Promise<Plaga[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   
   const response = await api.get(API_URL, {
@@ -19,7 +19,7 @@ const fetchPlagas = async (): Promise<Plaga[]> => {
 };
 
 const registrarPlaga = async (plaga: Plaga) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   const formData = new FormData();
@@ -39,7 +39,7 @@ const registrarPlaga = async (plaga: Plaga) => {
 };
 
 const actualizarPlaga = async (id: number, plaga: Plaga) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   const formData = new FormData();
@@ -59,7 +59,7 @@ const actualizarPlaga = async (id: number, plaga: Plaga) => {
 };
 
 const eliminarPlaga = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {
