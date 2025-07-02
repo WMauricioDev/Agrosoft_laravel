@@ -329,18 +329,6 @@ class InstalledVersions
     }
 
     /**
-     * @return string
-     */
-    private static function getSelfDir()
-    {
-        if (self::$selfDir === null) {
-            self::$selfDir = strtr(__DIR__, '\\', '/');
-        }
-
-        return self::$selfDir;
-    }
-
-    /**
      * @return array[]
      * @psalm-return list<array{root: array{name: string, pretty_version: string, version: string, reference: string|null, type: string, install_path: string, aliases: string[], dev: bool}, versions: array<string, array{pretty_version?: string, version?: string, reference?: string|null, type?: string, install_path?: string, aliases?: string[], dev_requirement: bool, replaced?: string[], provided?: string[]}>}>
      */
@@ -354,7 +342,7 @@ class InstalledVersions
         $copiedLocalDir = false;
 
         if (self::$canGetVendors) {
-            $selfDir = self::getSelfDir();
+            $selfDir = strtr(__DIR__, '\\', '/');
             foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
                 $vendorDir = strtr($vendorDir, '\\', '/');
                 if (isset(self::$installedByVendor[$vendorDir])) {

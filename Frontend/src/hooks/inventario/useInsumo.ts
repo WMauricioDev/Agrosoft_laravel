@@ -4,7 +4,7 @@ import { addToast } from "@heroui/react";
 import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/inventario/insumo/`;
+const API_URL = `${BASE_URL}/api/insumos/`;
 
 const fetchInsumos = async (): Promise<Insumo[]> => {
     const token = localStorage.getItem("accesso_token");
@@ -46,7 +46,7 @@ const fetchTiposInsumo = async (): Promise<TipoInsumo[]> => {
     const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await api.get(`${API_URL}tipos_insumo/`, {
+    const response = await api.get(`${BASE_URL}/api/tipo-insumos/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -232,20 +232,21 @@ export const useCrearUnidadMedida = () => {
 };
 
 const crearTipoInsumo = async (tipo: Omit<TipoInsumo, "id" | "fecha_creacion" | "creada_por_usuario">) => {
+    console.log("Payload sent:", tipo); // Add this line
     const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await api.post(`${API_URL}crear_tipo_insumo/`, tipo, {
+        const response = await api.post(`${BASE_URL}/api/tipo-insumos/`, tipo, {
             headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("Response received:", response.data); // Add this line
         return response.data;
     } catch (error: any) {
         console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
-
 export const useCrearTipoInsumo = () => {
     const queryClient = useQueryClient();
     return useMutation({

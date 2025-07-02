@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { Bodega } from "@/types/inventario/Bodega";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/inventario/bodega/`;
+const API_URL = `${BASE_URL}/api/bodegas/`;
 
 const fetchBodegas = async (): Promise<Bodega[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -30,7 +30,7 @@ export const useBodegas = () => {
 };
 
 const registrarBodega = async (bodega: Omit<Bodega, "id">) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -81,7 +81,7 @@ interface ActualizarBodegaParams {
 }
 
 const actualizarBodega = async (id: number, bodega: Omit<Bodega, "id">) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -127,7 +127,7 @@ export const useActualizarBodega = () => {
 };
 
 const eliminarBodega = async (id: number) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {

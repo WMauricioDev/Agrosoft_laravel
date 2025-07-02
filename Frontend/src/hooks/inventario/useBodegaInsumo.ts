@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { BodegaInsumo } from "@/types/inventario/BodegaInsumo";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/inventario/bodega_insumo/`;
+const API_URL = `${BASE_URL}/api/bodega_insumo/`;
 
 const fetchBodegaInsumos = async (): Promise<BodegaInsumo[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -31,12 +31,12 @@ export const useBodegaInsumos = () => {
 };
 
 const registrarBodegaInsumo = async (bodegaInsumo: Omit<BodegaInsumo, "id">) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     const payload = {
-        bodega: Number(bodegaInsumo.bodega),
-        insumo: Number(bodegaInsumo.insumo),
+        bodega_id: Number(bodegaInsumo.bodega_id),
+        insumo_id: Number(bodegaInsumo.insumo_id),
         cantidad: Number(bodegaInsumo.cantidad),
     };
 
@@ -90,12 +90,12 @@ interface ActualizarBodegaInsumoParams {
 }
 
 const actualizarBodegaInsumo = async (id: number, bodegaInsumo: Omit<BodegaInsumo, "id">) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     const payload = {
-        bodega: Number(bodegaInsumo.bodega),
-        insumo: Number(bodegaInsumo.insumo),
+        bodega_id: Number(bodegaInsumo.bodega_id),
+        insumo_id: Number(bodegaInsumo.insumo_id),
         cantidad: Number(bodegaInsumo.cantidad),
     };
 
@@ -144,7 +144,7 @@ export const useActualizarBodegaInsumo = () => {
 };
 
 const eliminarBodegaInsumo = async (id: number) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {

@@ -7,5 +7,4 @@ export interface Herramienta {
     activo: boolean;
     fecha_registro: string;
     precio: number;
-    cantidad_disponible: number
 }
