@@ -24,6 +24,8 @@ use App\Http\Controllers\Inventario\BodegaInsumoController;
 use App\Http\Controllers\Inventario\PrecioProductoController;
 use App\Http\Controllers\Inventario\HerramientaController;
 use App\Http\Controllers\Inventario\BodegaHerramientaController;
+use App\Http\Controllers\Trazabilidad\PlagaController;
+use App\Http\Controllers\Trazabilidad\AfeccionController;
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
@@ -192,6 +194,33 @@ Route::middleware(IsUserAuth::class)->group(function () {
      ->name('tipo-plaga.update');
  Route::delete('tipo-plaga/{tipoPlaga}', [TipoPlagaController::class, 'destroy'])
      ->name('tipo-plaga.destroy');
+
+    // Plagas
+    Route::get('plagas', [PlagaController::class, 'index'])
+        ->name('plagas.index');
+    Route::get('plagas/{plaga}', [PlagaController::class, 'show'])
+        ->name('plagas.show');
+    Route::post('plagas', [PlagaController::class, 'store'])
+        ->name('plagas.store');
+    Route::put('plagas/{plaga}', [PlagaController::class, 'update'])
+        ->name('plagas.update');
+    Route::delete('plagas/{plaga}', [PlagaController::class, 'destroy'])
+        ->name('plagas.destroy');
+
+    // Afecciones
+    Route::get('afecciones', [AfeccionController::class, 'index'])
+        ->name('afecciones.index');
+    Route::get('afecciones/{afeccion}', [AfeccionController::class, 'show'])
+        ->name('afecciones.show');
+    Route::post('afecciones', [AfeccionController::class, 'store'])
+        ->name('afecciones.store');
+    Route::patch('afecciones/{afeccion}', [AfeccionController::class, 'update'])
+        ->name('afecciones.update');
+    Route::post('afecciones/{afeccion}/cambiar_estado', [AfeccionController::class, 'cambiarEstado'])
+        ->name('afecciones.cambiar_estado');
+    Route::delete('afecciones/{afeccion}', [AfeccionController::class, 'destroy'])
+        ->name('afecciones.destroy');
+
     // Salarios
     Route::get('salarios', [SalarioController::class, 'index'])
         ->name('salarios.index');
