@@ -1,22 +1,26 @@
+import React from "react";
+
 export interface SensorData {
-  id?: number;
+  id?: number | string;
   device_code: string;
   sensor_nombre?: string;
   bancal_nombre?: string;
-  temperatura?: number | string;
-  humedad_ambiente?: number | string;
-  humedad_suelo?: number | string;
-  calidad_aire?: number | string;
-  luminosidad?: number | string;
+  temperatura?: number | null;
+  humedad_ambiente?: number | null;
+  humedad_suelo?: number | null;
+  calidad_aire?: number | null;
+  luminosidad?: number | null;
   fecha_medicion?: string;
 }
 
 export interface DataType {
-  label: string;
+  nombre: string;
   key: "temperatura" | "humedad_ambiente" | "humedad_suelo" | "calidad_aire" | "luminosidad";
-  icon: React.ReactNode; // Cambiado de Element a React.ReactNode
+  icon: React.ReactNode;
   tipo_sensor: string;
   decimals: number;
+  medida_minima?: number;
+  medida_maxima?: number;
 }
 
 export interface ViewMode {
@@ -28,7 +32,15 @@ export interface Sensor {
   id: number;
   nombre: string;
   tipo_sensor: string;
-  device_code: string;
+  tipo_sensor_id: number;
+  unidad_medida: string;
+  descripcion?: string;
+  estado: "activo" | "inactivo";
+  medida_minima: number;
+  medida_maxima: number;
+  device_code?: string | null;
+  bancal_id?: number | null;
+  bancal_nombre?: string | null;
 }
 
 export interface SensorChartsProps {
@@ -54,4 +66,5 @@ export interface ViewModeSelectorProps {
 
 export interface SensorTableProps {
   realTimeData: SensorData[];
+  selectedDataType: DataType;
 }

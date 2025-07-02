@@ -5,12 +5,40 @@ import { useSensores } from "@/hooks/iot/sensores/useSensores";
 import Tabla from "@/components/globales/Tabla";
 import CustomSpinner from "@/components/globales/Spinner";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { FaTemperatureHigh, FaTint } from "react-icons/fa";
+import { FaTemperatureHigh, FaTint, FaLeaf, FaWind, FaLightbulb } from "react-icons/fa";
 import { motion } from "framer-motion";
- 
+
 const dataTypes = [
-  { label: "Temperatura (°C)", key: "temperatura", icon: <FaTemperatureHigh className="text-red-500" /> },
-  { label: "Humedad (%)", key: "humedad_ambiente", icon: <FaTint className="text-blue-500" /> },
+  {
+    label: "Temperatura (°C)",
+    key: "temperatura",
+    icon: <FaTemperatureHigh className="text-red-500" />,
+    unit: "°C",
+  },
+  {
+    label: "Humedad Ambiente (%)",
+    key: "humedad_ambiente",
+    icon: <FaTint className="text-blue-500" />,
+    unit: "%",
+  },
+  {
+    label: "Humedad Suelo (%)",
+    key: "humedad_suelo",
+    icon: <FaLeaf className="text-green-500" />,
+    unit: "%",
+  },
+  {
+    label: "Calidad Aire (PPM)",
+    key: "calidad_aire",
+    icon: <FaWind className="text-yellow-500" />,
+    unit: "PPM",
+  },
+  {
+    label: "Luminosidad (lux)",
+    key: "luminosidad",
+    icon: <FaLightbulb className="text-amber-500" />,
+    unit: "lux",
+  },
 ];
 
 export default function DatosMeteorologicosPage() {
@@ -32,10 +60,10 @@ export default function DatosMeteorologicosPage() {
         dato[selectedDataType.key] != null
       )
       .map(dato => ({
-        id: dato.id || "N/A",
+        id: (dato.id || "N/A").toString(),
         sensor: dato.sensor_nombre || "Desconocido",
         bancal: dato.bancal_nombre || "N/A",
-        value: dato[selectedDataType.key],
+        value: dato[selectedDataType.key] != null ? Number(dato[selectedDataType.key]).toFixed(2) : "N/A",
         fecha_medicion: new Date(dato.fecha_medicion).toLocaleString("es-ES", {
           year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
         })
@@ -50,7 +78,7 @@ export default function DatosMeteorologicosPage() {
       .map(dato => ({
         fecha: dato.fecha_medicion.split(',')[0], 
         hora: dato.fecha_medicion.split(',')[1].trim(), 
-        value: Number(dato.value)
+        value: dato.value !== "N/A" ? Number(dato.value) : null
       }));
   }, [tableData]);
 
@@ -66,7 +94,7 @@ export default function DatosMeteorologicosPage() {
     return (
       <DefaultLayout>
         <div className="flex justify-center items-center h-screen">
-          <CustomSpinner label="Cargando datos..." color="primary" />
+          <CustomSpinner label="Cargando datos..." color="primary" variant="default" />
         </div>
       </DefaultLayout>
     );
@@ -80,7 +108,7 @@ export default function DatosMeteorologicosPage() {
         {/* Selector de tipo de dato */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Dato</label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {dataTypes.map(type => (
               <motion.button
                 key={type.key}
@@ -131,8 +159,8 @@ export default function DatosMeteorologicosPage() {
               <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 30 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="hora" angle={-45} textAnchor="end" height={50} tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => selectedDataType.key === 'temperatura' ? `${value}°C` : `${value}%`} />
-                <Tooltip />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => `${value}${selectedDataType.unit}`} />
+                <Tooltip formatter={(value) => `${value}${selectedDataType.unit}`} />
                 <Line type="monotone" dataKey="value" stroke={selectedDataType.key === 'temperatura' ? "#ef4444" : "#3b82f6"} strokeWidth={2} dot={{ r: 2 }} />
               </LineChart>
             </ResponsiveContainer>

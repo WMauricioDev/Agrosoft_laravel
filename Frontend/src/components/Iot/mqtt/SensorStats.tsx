@@ -6,20 +6,20 @@ export const SensorStats: React.FC<SensorStatsProps> = ({ realTimeData, selected
   const stats = useMemo(() => {
     const filteredData = selectedSensor === "todos" ? realTimeData : realTimeData.filter((d) => d.device_code === selectedSensor.toString());
     const tempValues = filteredData
-      .filter((d) => d.temperatura != null)
-      .map((d) => (typeof d.temperatura === "number" ? d.temperatura : parseFloat(d.temperatura as string) || 0));
+      .filter((d) => d.temperatura !== null && d.temperatura !== undefined)
+      .map((d) => d.temperatura as number);
     const humValues = filteredData
-      .filter((d) => d.humedad_ambiente != null)
-      .map((d) => (typeof d.humedad_ambiente === "number" ? d.humedad_ambiente : parseFloat(d.humedad_ambiente as string) || 0));
+      .filter((d) => d.humedad_ambiente !== null && d.humedad_ambiente !== undefined)
+      .map((d) => d.humedad_ambiente as number);
     const soilValues = filteredData
-      .filter((d) => d.humedad_suelo != null)
-      .map((d) => (typeof d.humedad_suelo === "number" ? d.humedad_suelo : parseFloat(d.humedad_suelo as string) || 0));
+      .filter((d) => d.humedad_suelo !== null && d.humedad_suelo !== undefined)
+      .map((d) => d.humedad_suelo as number);
     const airValues = filteredData
-      .filter((d) => d.calidad_aire != null)
-      .map((d) => (typeof d.calidad_aire === "number" ? d.calidad_aire : parseFloat(d.calidad_aire as string) || 0));
+      .filter((d) => d.calidad_aire !== null && d.calidad_aire !== undefined)
+      .map((d) => d.calidad_aire as number);
     const luxValues = filteredData
-      .filter((d) => d.luminosidad != null)
-      .map((d) => (typeof d.luminosidad === "number" ? d.luminosidad : parseFloat(d.luminosidad as string) || 0));
+      .filter((d) => d.luminosidad !== null && d.luminosidad !== undefined)
+      .map((d) => d.luminosidad as number);
 
     return {
       temp: {
@@ -50,46 +50,31 @@ export const SensorStats: React.FC<SensorStatsProps> = ({ realTimeData, selected
     };
   }, [realTimeData, selectedSensor]);
 
-  console.log("stats:", stats);
-
   return (
-    <motion.div
-      className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div>
-        <h3 className="text-lg font-semibold text-gray-700">Temperatura (°C)</h3>
-        <p>Max: {stats.temp.max?.toFixed(2) ?? "N/A"}</p>
-        <p>Min: {stats.temp.min?.toFixed(2) ?? "N/A"}</p>
-        <p>Promedio: {stats.temp.avg?.toFixed(2) ?? "N/A"}</p>
-      </div>
-      <div>
-        <h3 className="text-lg font-semibold text-gray-700">Humedad Ambiente (%)</h3>
-        <p>Max: {stats.hum.max?.toFixed(1) ?? "N/A"}</p>
-        <p>Min: {stats.hum.min?.toFixed(1) ?? "N/A"}</p>
-        <p>Promedio: {stats.hum.avg?.toFixed(1) ?? "N/A"}</p>
-      </div>
-      <div>
-        <h3 className="text-lg font-semibold text-gray-700">Humedad Suelo (%)</h3>
-        <p>Max: {stats.soil.max?.toFixed(1) ?? "N/A"}</p>
-        <p>Min: {stats.soil.min?.toFixed(1) ?? "N/A"}</p>
-        <p>Promedio: {stats.soil.avg?.toFixed(1) ?? "N/A"}</p>
-      </div>
-      <div>
-        <h3 className="text-lg font-semibold text-gray-700">Calidad Aire (PPM)</h3>
-        <p>Max: {stats.air.max?.toFixed(0) ?? "N/A"}</p>
-        <p>Min: {stats.air.min?.toFixed(0) ?? "N/A"}</p>
-        <p>Promedio: {stats.air.avg?.toFixed(0) ?? "N/A"}</p>
-      </div>
-      <div>
-        <h3 className="text-lg font-semibold text-gray-700">Luminosidad (lux)</h3>
-        <p>Max: {stats.lux.max?.toFixed(0) ?? "N/A"}</p>
-        <p>Min: {stats.lux.min?.toFixed(0) ?? "N/A"}</p>
-        <p>Promedio: {stats.lux.avg?.toFixed(0) ?? "N/A"}</p>
-      </div>
-    </motion.div>
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-6 w-full">
+      {[
+        { title: "Temperatura (°C)", stats: stats.temp, decimals: 2, color: "text-red-500" },
+        { title: "Humedad Ambiente (%)", stats: stats.hum, decimals: 1, color: "text-blue-600" },
+        { title: "Humedad Suelo (%)", stats: stats.soil, decimals: 1, color: "text-green-500" },
+        { title: "Calidad Aire (PPM)", stats: stats.air, decimals: 0, color: "text-yellow-500" },
+        { title: "Luminosidad (lux)", stats: stats.lux, decimals: 0, color: "text-amber-500" },
+      ].map((item, index) => (
+        <motion.div
+          key={index}
+          className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between items-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: index * 0.1 }}
+        >
+          <h3 className={`text-sm font-semibold ${item.color}`}>{item.title}</h3>
+          <div className="text-center">
+            <p>Max: {item.stats.max?.toFixed(item.decimals) ?? "N/A"}</p>
+            <p>Min: {item.stats.min?.toFixed(item.decimals) ?? "N/A"}</p>
+            <p>Promedio: {item.stats.avg?.toFixed(item.decimals) ?? "N/A"}</p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
   );
 };
 
