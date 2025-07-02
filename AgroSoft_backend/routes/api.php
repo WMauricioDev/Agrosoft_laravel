@@ -27,6 +27,8 @@ use App\Http\Controllers\Inventario\BodegaHerramientaController;
 use App\Http\Controllers\Trazabilidad\ActividadesController;
 use App\Http\Controllers\Trazabilidad\PrestamoInsumoController;
 use App\Http\Controllers\Trazabilidad\PrestamoHerramientaController;
+use App\Http\Controllers\Finanzas\PagoController;
+
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
 Route::post('login', [AuthController::class, 'login'])
@@ -244,7 +246,19 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('salarios.update')->middleware([IsAdmin::class, IsUserAuth::class]);
     Route::delete('salarios/{salario}', [SalarioController::class, 'destroy'])
         ->name('salarios.destroy')->middleware([IsAdmin::class, IsUserAuth::class]); 
-        
+    // Pagos
+    Route::get('pagos', [PagoController::class, 'index'])
+        ->name('pagos.index');
+    Route::get('pagos/{pago}', [PagoController::class, 'show'])
+        ->name('pagos.show');
+    Route::post('pagos', [PagoController::class, 'store'])
+        ->name('pagos.store')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::put('pagos/{pago}', [PagoController::class, 'update'])
+        ->name('pagos.update')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::delete('pagos/{pago}', [PagoController::class, 'destroy'])
+        ->name('pagos.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);
+    Route::post('pagos/calcular', [PagoController::class, 'calcular'])
+        ->name('pagos.calcular')->middleware([IsAdmin::class, IsUserAuth::class]);
      // Tipo Insumos
         Route::post('tipo-insumos', [TipoInsumoController::class, 'store'])
             ->name('tipo-insumos.store');
