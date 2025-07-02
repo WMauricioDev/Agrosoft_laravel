@@ -6,11 +6,11 @@ import api from "@/components/utils/axios";
 import { EvapotranspiracionData, SensorData } from "@/types/iot/type";
 import { Cultivo } from "@/types/cultivo/Cultivo";
 import { obtenerNuevoToken } from "@/components/utils/refresh";
- 
+
 const fetchBancales = async (): Promise<{ id: number; posY: number | null }[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) {
-    addToast({
+    addToast({ 
       title: "Sesión expirada",
       description: "No se encontró el token de autenticación, por favor inicia sesión nuevamente.",
       timeout: 3000,
@@ -85,14 +85,12 @@ const calculateRa = (latitude: number, dayOfYear: number): number => {
   return Ra;
 };
 
-// Función para calcular ET0 usando el método de Hargreaves
 const calculateET0 = (tMax: number, tMin: number, ra: number): number => {
   const tMean = (tMax + tMin) / 2;
   const et0 = 0.0023 * (tMean + 17.8) * Math.sqrt(tMax - tMin) * ra;
   return et0;
 };
 
-// Hook principal
 export const useEvapotranspiracion = (cultivoId: number) => {
   const { data: datosMeteorologicos = [], isLoading: isLoadingDatos, error: errorDatos } =
     useDatosMeteorologicosHistoricos();

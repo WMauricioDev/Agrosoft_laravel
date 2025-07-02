@@ -9,6 +9,10 @@ interface Sensor {
   descripcion: string;
   medida_minima: number;
   medida_maxima: number;
+  tipo_sensor_id?: number;  
+  device_code?: string | null;
+  bancal_id?: number | null;
+  estado?: string;
 }
 
 const RegistrarSensor: React.FC = () => {
@@ -19,6 +23,9 @@ const RegistrarSensor: React.FC = () => {
     descripcion: "",
     medida_minima: 0,
     medida_maxima: 0,
+    tipo_sensor_id: 0,
+    device_code: null,
+    estado: "inactivo",
   });
 
   const mutation = useRegistrarSensor();
@@ -34,7 +41,7 @@ const RegistrarSensor: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate(sensor);
+    mutation.mutate(sensor as any);  
     setSensor({
       nombre: "",
       tipo_sensor: "",
@@ -42,6 +49,9 @@ const RegistrarSensor: React.FC = () => {
       descripcion: "",
       medida_minima: 0,
       medida_maxima: 0,
+      tipo_sensor_id: 0,
+      device_code: null,
+      estado: "inactivo",
     });
   };
 
