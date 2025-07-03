@@ -28,28 +28,42 @@ class VentaController extends Controller
     ]);
 
     // Crear detalles
-    foreach ($validated['detalles'] as $detalle) {
-        $venta->detalles()->create([
-            'producto' => $detalle['producto'],
-            'cantidad' => $detalle['cantidad'],
-            'unidad_medidas' => $detalle['unidad_medidas'],
-            'total' => $detalle['total'],
-            'precio_unitario' => $detalle['precio_unitario'] ?? ($detalle['cantidad'] > 0 ? $detalle['total'] / $detalle['cantidad'] : 0),
-        ]);
-
+foreach ($validated['detalles'] as $detalle) {
+    // Busca el producto en la tabla de precios
     $precioProducto = PrecioProducto::find($detalle['producto']);
-    if ($precioProducto) {
-        $nuevoStock = $precioProducto->stock - $detalle['cantidad'];
-        if ($nuevoStock < 0) {
-            return response()->json([
-                'success' => false,
-                'message' => "Stock insuficiente para el producto ID {$detalle['producto']}"
-            ], 400);
-        }
-        $precioProducto->stock = $nuevoStock;
-        $precioProducto->save();
-     }
+
+    if (!$precioProducto) {
+        return response()->json([
+            'success' => false,
+            'message' => "Producto con ID {$detalle['producto']} no encontrado en precios."
+        ], 400);
     }
+
+    // Calcula el precio unitario real
+    $precioUnitario = $precioProducto->precio;
+    $total = $precioUnitario * $detalle['cantidad'];
+
+    // Crea el detalle
+    $venta->detalles()->create([
+        'producto' => $detalle['producto'],
+        'cantidad' => $detalle['cantidad'],
+        'unidad_medidas' => $detalle['unidad_medidas'],
+        'total' => $total,
+        'precio_unitario' => $precioUnitario,
+    ]);
+
+    // Descuenta stock
+    $nuevoStock = $precioProducto->stock - $detalle['cantidad'];
+    if ($nuevoStock < 0) {
+        return response()->json([
+            'success' => false,
+            'message' => "Stock insuficiente para el producto ID {$detalle['producto']}"
+        ], 400);
+    }
+    $precioProducto->stock = $nuevoStock;
+    $precioProducto->save();
+}
+    
 
     return response()->json($venta->load('detalles'), 201);
 }

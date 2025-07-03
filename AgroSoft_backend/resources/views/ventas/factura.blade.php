@@ -3,9 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: monospace; font-size: 10px; }
-        .center { text-align: center; }
-        .line { border-top: 1px dashed #000; margin: 5px 0; }
+        body {
+            font-family: monospace;
+            font-size: 9px;
+            margin: 0;
+            padding: 0;
+        }
+        .center {
+            text-align: center;
+        }
+        .line {
+            border-top: 1px dashed #000;
+            margin: 2px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 1px 2px;
+        }
     </style>
 </head>
 <body>
@@ -21,7 +38,7 @@
         <div class="line"></div>
     </div>
 
-    <table width="100%">
+    <table>
         <thead>
             <tr>
                 <td>Prod(ID)</td>
@@ -35,7 +52,7 @@
                 <tr>
                     <td>{{ $d->producto }}</td>
                     <td>{{ $d->cantidad }}</td>
-                    <td>${{ number_format($d->precio ?? 0, 2) }}</td>
+                    <td>${{ number_format($d->precio_unitario ?? 0, 2) }}</td>
                     <td>${{ number_format($d->total, 2) }}</td>
                 </tr>
             @endforeach
@@ -44,10 +61,11 @@
 
     <div class="line"></div>
     <div>
-        Total: ${{ number_format($venta->detalles->sum('total'), 2) }}<br>
-        Entregado: ${{ number_format($venta->monto_entregado, 2) }}<br>
-        Cambio: ${{ number_format($venta->cambio, 2) }}<br>
+        <strong>Total:</strong> ${{ number_format($venta->detalles->sum('total'), 2) }}<br>
+        <strong>Entregado:</strong> ${{ number_format($venta->monto_entregado, 2) }}<br>
+        <strong>Cambio:</strong> ${{ number_format($venta->cambio, 2) }}<br>
     </div>
+
     <div class="center line"></div>
     <div class="center">
         ¡Gracias por su compra!<br>
