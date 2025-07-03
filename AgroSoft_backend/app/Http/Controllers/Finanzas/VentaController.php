@@ -5,7 +5,10 @@ use App\http\Controllers\Controller;
 use App\Http\Requests\Finanzas\StoreVentaRequest;
 use Illuminate\Http\Request;
 use App\Models\Finanzas\Venta;
+use App\Models\Inventario\PrecioProducto;
 use Illuminate\Http\JsonResponse;
+use Barryvdh\DomPDF\Facade\Pdf; 
+
 
 class VentaController extends Controller
 {
@@ -31,8 +34,21 @@ class VentaController extends Controller
             'cantidad' => $detalle['cantidad'],
             'unidad_medidas' => $detalle['unidad_medidas'],
             'total' => $detalle['total'],
-            'precio_unitario' => $detalle['precio_unitario'] ?? null,
+            'precio_unitario' => $detalle['precio_unitario'] ?? ($detalle['cantidad'] > 0 ? $detalle['total'] / $detalle['cantidad'] : 0),
         ]);
+
+    $precioProducto = PrecioProducto::find($detalle['producto']);
+    if ($precioProducto) {
+        $nuevoStock = $precioProducto->stock - $detalle['cantidad'];
+        if ($nuevoStock < 0) {
+            return response()->json([
+                'success' => false,
+                'message' => "Stock insuficiente para el producto ID {$detalle['producto']}"
+            ], 400);
+        }
+        $precioProducto->stock = $nuevoStock;
+        $precioProducto->save();
+     }
     }
 
     return response()->json($venta->load('detalles'), 201);
@@ -44,7 +60,7 @@ public function index()
         $venta = Venta::all();
 
 
-        $ventas = Venta::with('detalles')->get();
+        $venta = Venta::with('detalles')->get();
         return response()->json([
             'success'=>true,
             'message'=>'Lista de ventas obtenida correctamente',
@@ -75,4 +91,18 @@ public function index()
     {
         //
     }
+
+ public function facturaPDF($id)
+{
+    $venta = Venta::with('detalles')->find($id);
+
+    if (!$venta) {
+        return response()->json(['error' => 'Venta no encontrada'], 404);
+    }
+
+    $pdf = Pdf::loadView('ventas.factura', compact('venta'));
+
+    return $pdf->stream("factura_{$venta->id}.pdf");
+}
+
 }

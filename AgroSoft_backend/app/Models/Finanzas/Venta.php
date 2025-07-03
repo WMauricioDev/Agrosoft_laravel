@@ -15,9 +15,12 @@ class Venta extends Model
         'cambio',
     ];
 
+
    
     public function detalles()
     {
         return $this->hasMany(DetalleVenta::class);
     }
+
+    
 }

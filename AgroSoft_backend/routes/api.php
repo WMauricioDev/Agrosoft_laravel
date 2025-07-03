@@ -294,6 +294,8 @@ Route::middleware(IsUserAuth::class)->group(function () {
 
     // Venta
         Route::resource('venta', VentaController::class)->only(['index', 'store']);
+        Route::get('/venta/{venta}/factura_pdf', [VentaController::class, 'facturaPDF']);
+
      // Tipo Insumos
         Route::post('tipo-insumos', [TipoInsumoController::class, 'store'])
             ->name('tipo-insumos.store');

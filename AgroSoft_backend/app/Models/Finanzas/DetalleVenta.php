@@ -4,7 +4,8 @@ namespace App\Models\Finanzas;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Inventario\PrecioProducto;
+use App\Models\Trazabilidad\UnidadMedida;
 class DetalleVenta extends Model
 {
     use HasFactory;
@@ -23,4 +24,7 @@ class DetalleVenta extends Model
     {
         return $this->belongsTo(Venta::class);
     }
+
+    public function productoPrecio() { return $this->belongsTo(PrecioProducto::class, 'producto'); }
+public function unidadMedidas() { return $this->belongsTo(UnidadMedida::class, 'unidad_medidas'); }
 }
