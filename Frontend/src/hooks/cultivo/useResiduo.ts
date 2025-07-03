@@ -5,28 +5,28 @@ import { Residuo } from "@/types/cultivo/Residuos";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/cultivo/residuos/`;
+const API_URL = `${BASE_URL}/api/residuo/`;
 
 const fetchResiduos = async (): Promise<Residuo[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data;
+  return response.data.data;
 };
 
 const fetchResiduoById = async (id: number): Promise<Residuo> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data;
+  return response.data.data;
 };
 
 const registrarResiduo = async (residuo: Residuo) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.post(API_URL, residuo, {
@@ -38,7 +38,7 @@ const registrarResiduo = async (residuo: Residuo) => {
 };
 
 const actualizarResiduo = async (id: number, residuo: Residuo) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.put(`${API_URL}${id}/`, residuo, {
@@ -50,7 +50,7 @@ const actualizarResiduo = async (id: number, residuo: Residuo) => {
 };
 
 const eliminarResiduo = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {

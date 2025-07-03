@@ -9,6 +9,8 @@ use App\Http\Controllers\Trazabilidad\EspecieController;
 use App\Http\Controllers\Trazabilidad\CultivoController;
 use App\Http\Controllers\Trazabilidad\UnidadMedidaController;
 use App\Http\Controllers\Trazabilidad\CosechaController;
+use App\Http\Controllers\Trazabilidad\TipoResiduoController;
+use App\http\Controllers\Trazabilidad\ResiduoController;
 use App\Http\Controllers\Trazabilidad\TipoPlagaController;
 use App\Http\Controllers\Finanzas\SalarioController;
 use App\Http\Controllers\Usuarios\UserController;
@@ -214,7 +216,9 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('cosechas.destroy');
     Route::get('cosechas/reporte/{pdf}', [CosechaController::class, 'reportePdf'])
         ->name('reporte.reportePdf');
-
+    // Tipo residuo y Residuo
+    Route::resource('tipo_residuo',TipoResiduoController::class );
+    Route::resource('residuo', ResiduoController::class);
     // Unidades de Medida
     Route::get('unidad-medidas', [UnidadMedidaController::class, 'index'])
         ->name('unidad-medidas.index');
