@@ -20,6 +20,7 @@ use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUserAuth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Trazabilidad\TipoControlController;
+use App\Http\Controllers\Trazabilidad\ControlesController;
 use App\Http\Controllers\Inventario\BodegaController;
 use App\Http\Controllers\Inventario\TipoInsumoController;
 use App\Http\Controllers\Inventario\InsumoController;
@@ -84,12 +85,13 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('tipo-actividades.update');
     Route::delete('tipo-actividades/{tipoActividad}', [TipoActividadController::class, 'destroy'])
         ->name('tipo-actividades.destroy');    
-    // Traer y registrar tipo de control
+    // Traer y registrar tipo de control- control
     Route::apiResource('tipo_control', TipoControlController::class);
 
     Route::get('/tipo_control/{id}', [TipoControlController::class, 'show']);
     Route::put('/tipo_control/{id}', [TipoControlController::class, 'update']);
     Route::delete('/tipo_control/{id}', [TipoControlController::class, 'destroy']);
+    Route::resource('control',ControlesController::class);
 
     // Lotes
     Route::get('lotes', [LoteController::class, 'index'])
