@@ -22,15 +22,15 @@ export const TiqueteModal: React.FC<TiqueteModalProps> = ({
       const url = URL.createObjectURL(pdfBlob);
       setObjectUrl(url);
       return () => {
-        if (url) URL.revokeObjectURL(url);
+        URL.revokeObjectURL(url);
+        setObjectUrl(null);
       };
     }
   }, [pdfBlob]);
 
   const handlePrint = () => {
     if (!objectUrl) return;
-    
-    const printWindow = window.open(objectUrl, '_blank');
+    const printWindow = window.open(objectUrl, "_blank");
     if (printWindow) {
       printWindow.onload = () => {
         printWindow.print();
@@ -38,15 +38,16 @@ export const TiqueteModal: React.FC<TiqueteModalProps> = ({
     } else {
       addToast({
         title: "Error",
-        description: "No se pudo abrir la ventana de impresión. Por favor, permite ventanas emergentes para este sitio."
+        description: "No se pudo abrir la ventana de impresión. Permite popups.",
+        timeout: 3000,
+        color: "danger",
       });
     }
   };
 
   const handleDownload = () => {
-    if (!objectUrl || !pdfBlob) return;
-    
-    const link = document.createElement('a');
+    if (!objectUrl) return;
+    const link = document.createElement("a");
     link.href = objectUrl;
     link.download = `tiquete_venta_${ventaId}.pdf`;
     document.body.appendChild(link);
@@ -54,11 +55,24 @@ export const TiqueteModal: React.FC<TiqueteModalProps> = ({
     document.body.removeChild(link);
   };
 
+  const handleOpenNewTab = () => {
+    if (!objectUrl) return;
+    const win = window.open(objectUrl, "_blank");
+    if (!win) {
+      addToast({
+        title: "Error",
+        description: "No se pudo abrir el PDF. Permite popups.",
+        timeout: 3000,
+        color: "danger",
+      });
+    }
+  };
+
   return (
     <ReuModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      title="Imprimir Tiquete"
+      title="Vista previa del Tiquete"
       size="lg"
       hideFooter
     >
@@ -77,12 +91,14 @@ export const TiqueteModal: React.FC<TiqueteModalProps> = ({
 
         {objectUrl && (
           <div className="flex flex-col items-center">
-            <iframe 
-              src={objectUrl} 
-              className="w-full h-96 border border-gray-300 mb-4"
-              title="Vista previa del tiquete"
-            />
-            
+            <div className="flex justify-center">
+              <iframe
+                src={objectUrl}
+                className="w-[350px] h-[500px] border border-gray-300 mb-4 rounded shadow"
+                title="Vista previa del tiquete"
+              />
+            </div>
+
             <div className="flex gap-4">
               <button
                 onClick={handlePrint}
@@ -90,12 +106,17 @@ export const TiqueteModal: React.FC<TiqueteModalProps> = ({
               >
                 Imprimir
               </button>
-              
               <button
                 onClick={handleDownload}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
                 Descargar
+              </button>
+              <button
+                onClick={handleOpenNewTab}
+                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+              >
+                Abrir en pestaña
               </button>
             </div>
           </div>

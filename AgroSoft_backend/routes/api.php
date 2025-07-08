@@ -9,14 +9,18 @@ use App\Http\Controllers\Trazabilidad\EspecieController;
 use App\Http\Controllers\Trazabilidad\CultivoController;
 use App\Http\Controllers\Trazabilidad\UnidadMedidaController;
 use App\Http\Controllers\Trazabilidad\CosechaController;
+use App\Http\Controllers\Trazabilidad\TipoResiduoController;
+use App\http\Controllers\Trazabilidad\ResiduoController;
 use App\Http\Controllers\Trazabilidad\TipoPlagaController;
 use App\Http\Controllers\Finanzas\SalarioController;
 use App\Http\Controllers\Usuarios\UserController;
 use App\Http\Controllers\Usuarios\RolesController;
+use App\Http\Controllers\Usuarios\ImportUsuarioController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUserAuth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Trazabilidad\TipoControlController;
+use App\Http\Controllers\Trazabilidad\ControlesController;
 use App\Http\Controllers\Inventario\BodegaController;
 use App\Http\Controllers\Inventario\TipoInsumoController;
 use App\Http\Controllers\Inventario\InsumoController;
@@ -30,6 +34,7 @@ use App\Http\Controllers\Trazabilidad\ActividadesController;
 use App\Http\Controllers\Trazabilidad\PrestamoInsumoController;
 use App\Http\Controllers\Trazabilidad\PrestamoHerramientaController;
 use App\Http\Controllers\Finanzas\PagoController;
+use App\Http\Controllers\Finanzas\VentaController;
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
@@ -56,6 +61,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
     Route::patch('/user/{user}', [UserController::class, 'update']);
     Route::post('/user/secondRegister', [UserController::class, 'store']);
+    Route::post('/user/masivRegister', [ImportUsuarioController::class, 'importar']);
 
 
     // Cerrar sesión
@@ -79,12 +85,13 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('tipo-actividades.update');
     Route::delete('tipo-actividades/{tipoActividad}', [TipoActividadController::class, 'destroy'])
         ->name('tipo-actividades.destroy');    
-    // Traer y registrar tipo de control
+    // Traer y registrar tipo de control- control
     Route::apiResource('tipo_control', TipoControlController::class);
 
     Route::get('/tipo_control/{id}', [TipoControlController::class, 'show']);
     Route::put('/tipo_control/{id}', [TipoControlController::class, 'update']);
     Route::delete('/tipo_control/{id}', [TipoControlController::class, 'destroy']);
+    Route::resource('control',ControlesController::class);
 
     // Lotes
     Route::get('lotes', [LoteController::class, 'index'])
@@ -211,7 +218,9 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('cosechas.destroy');
     Route::get('cosechas/reporte/{pdf}', [CosechaController::class, 'reportePdf'])
         ->name('reporte.reportePdf');
-
+    // Tipo residuo y Residuo
+    Route::resource('tipo_residuo',TipoResiduoController::class );
+    Route::resource('residuo', ResiduoController::class);
     // Unidades de Medida
     Route::get('unidad-medidas', [UnidadMedidaController::class, 'index'])
         ->name('unidad-medidas.index');
@@ -288,6 +297,11 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('pagos.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);
     Route::post('pagos/calcular', [PagoController::class, 'calcular'])
         ->name('pagos.calcular')->middleware([IsAdmin::class, IsUserAuth::class]);
+
+    // Venta
+        Route::resource('venta', VentaController::class)->only(['index', 'store']);
+        Route::get('/venta/{venta}/factura_pdf', [VentaController::class, 'facturaPDF']);
+
      // Tipo Insumos
         Route::post('tipo-insumos', [TipoInsumoController::class, 'store'])
             ->name('tipo-insumos.store');

@@ -137,8 +137,9 @@ const ResiduoPage: React.FC = () => {
             <option value="">Seleccione una cosecha</option>
             {cosechas?.map((cosecha) => (
               <option key={cosecha.id} value={cosecha.id}>
-                {cosecha.cultivo_nombre}
-              </option>
+            {cosecha.cultivo?.nombre || 'Sin nombre'}
+          </option>
+
             ))}
           </select>
         </div>
@@ -162,7 +163,7 @@ const ResiduoPage: React.FC = () => {
             className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
           >
             <option value="">Seleccione un tipo de residuo</option>
-            {tiposResiduos?.map((tipo) => (
+{Array.isArray(tiposResiduos) && tiposResiduos.map((tipo) => (
               <option key={tipo.id} value={tipo.id}>
                 {tipo.nombre}
               </option>

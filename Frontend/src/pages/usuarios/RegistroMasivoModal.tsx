@@ -50,7 +50,7 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
     formData.append('archivo', archivo);
 
     try {
-      const response = await api.post(`${API_URL}/registro_usuarios_masivo/`, formData, {
+      const response = await api.post(`${API_URL}/api/user/masivRegister`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -50,9 +50,9 @@ const TipoResiduoPage: React.FC = () => {
           <button
             className="w-full max-w-md px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm uppercase tracking-wide"
             type="button"
-            onClick={() => navigate("/cultivo/listartipoespecie/")}
+            onClick={() => navigate("/cultivo/listatiporesiduo/")}
           >
-            Listar Tipo de Especie
+            Listar Tipo de tipos residuo
           </button>
         </div>
       </Formulario>
