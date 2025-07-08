@@ -6,9 +6,10 @@ import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import ReuModal from "@/components/globales/ReuModal";
 import Tabla from "@/components/globales/Tabla";
 import { useNavigate } from "react-router-dom";
-import { EditIcon, Trash2 } from 'lucide-react';
+import { EditIcon, Trash2 } from "lucide-react";
 import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
 import { UnidadMedida } from "@/types/inventario/Insumo";
+
 const ListarCosechaPage: React.FC = () => {
   const [selectedCosecha, setSelectedCosecha] = useState<any>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -30,7 +31,13 @@ const ListarCosechaPage: React.FC = () => {
   ];
 
   const handleEdit = (cosecha: any) => {
-    setSelectedCosecha(cosecha);
+    setSelectedCosecha({
+      id: cosecha.id,
+      cultivo_id: cosecha.cultivo_id,
+      cantidad: cosecha.cantidad,
+      unidad_medida_id: cosecha.unidad_medida_id,
+      fecha: new Date(cosecha.fecha).toISOString().split("T")[0], // Convertir a yyyy-MM-dd
+    });
     setIsEditModalOpen(true);
   };
 
@@ -51,10 +58,11 @@ const ListarCosechaPage: React.FC = () => {
   };
 
   const transformedData = (cosechas ?? []).map((cosecha) => ({
-    id: cosecha.id?.toString() || '',
-    cultivo: cultivos?.find((cultivo) => cultivo.id === cosecha.cultivo_id)?.nombre || 'Sin cultivo',
+    id: cosecha.id?.toString() || "",
+    cultivo: cultivos?.find((cultivo) => cultivo.id === cosecha.cultivo_id)?.nombre || "Sin cultivo",
     cantidad: cosecha.cantidad,
-    unidades_de_medida: unidadesMedida?.find((um) => um.id === cosecha.unidad_medida_id)?.nombre || 'Sin unidad',
+    unidades_de_medida:
+      unidadesMedida?.find((um) => um.id === cosecha.unidad_medida_id)?.nombre || "Sin unidad",
     fecha: new Date(cosecha.fecha).toLocaleDateString(),
     acciones: (
       <>
@@ -62,13 +70,13 @@ const ListarCosechaPage: React.FC = () => {
           className="text-green-500 hover:underline mr-2"
           onClick={() => handleEdit(cosecha)}
         >
-           <EditIcon size={22} color='black'/>
+          <EditIcon size={22} color="black" />
         </button>
         <button
           className="text-red-500 hover:underline"
           onClick={() => handleDelete(cosecha)}
         >
-            <Trash2   size={22} color='red'/>
+          <Trash2 size={22} color="red" />
         </button>
       </>
     ),
@@ -76,31 +84,38 @@ const ListarCosechaPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-          <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Cosechas</h2>
-          <div className="mb-2 flex justify-start">
-                        <button
-                        className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
-                                    hover:bg-green-700 transition-all duration-300 ease-in-out 
-                                    shadow-md hover:shadow-lg transform hover:scale-105"
-                        onClick={() => navigate('/cultivo/cosecha/')} 
-                        >
-                        + Registrar
-                        </button>
-            </div>
-          {isLoading ? (
-            <p className="text-gray-600">Cargando...</p>
-          ) : (
-            <>
-              <Tabla columns={columns} data={transformedData} />
-            </>
-          )}
+      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Cosechas</h2>
+      <div className="mb-2 flex justify-start">
+        <button
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                     hover:bg-green-700 transition-all duration-300 ease-in-out 
+                     shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => navigate("/cultivo/cosecha/")}
+        >
+          + Registrar
+        </button>
+      </div>
+      {isLoading ? (
+        <p className="text-gray-600">Cargando...</p>
+      ) : (
+        <>
+          <Tabla columns={columns} data={transformedData} />
+        </>
+      )}
 
       <ReuModal
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         title="Editar Cosecha"
         onConfirm={() => {
-          if (selectedCosecha && selectedCosecha.id !== undefined) {
+          if (
+            selectedCosecha &&
+            selectedCosecha.id !== undefined &&
+            selectedCosecha.cultivo_id &&
+            selectedCosecha.cantidad > 0 &&
+            selectedCosecha.unidad_medida_id &&
+            selectedCosecha.fecha
+          ) {
             actualizarMutation.mutate(
               { id: selectedCosecha.id, cosecha: selectedCosecha },
               {
@@ -110,6 +125,8 @@ const ListarCosechaPage: React.FC = () => {
                 },
               }
             );
+          } else {
+            alert("Por favor, complete todos los campos correctamente.");
           }
         }}
       >
@@ -117,17 +134,19 @@ const ListarCosechaPage: React.FC = () => {
           <label className="block text-sm font-medium text-gray-700">Cultivo</label>
           <select
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={selectedCosecha?.id_cultivo || 0}
+            value={selectedCosecha?.cultivo_id || ""}
             onChange={(e) =>
               setSelectedCosecha((prev: any) => ({
                 ...prev,
-                id_cultivo: parseInt(e.target.value),
+                cultivo_id: parseInt(e.target.value) || null,
               }))
             }
           >
             <option value="">Seleccione un cultivo</option>
             {cultivos?.map((cultivo) => (
-              <option key={cultivo.id} value={cultivo.id}>{cultivo.nombre}</option>
+              <option key={cultivo.id} value={cultivo.id}>
+                {cultivo.nombre}
+              </option>
             ))}
           </select>
         </div>
@@ -135,42 +154,43 @@ const ListarCosechaPage: React.FC = () => {
           label="Cantidad"
           placeholder="Ingrese la cantidad"
           type="number"
-          value={selectedCosecha?.cantidad || 0}
+          value={selectedCosecha?.cantidad || ""}
           onChange={(e) =>
             setSelectedCosecha((prev: any) => ({
               ...prev,
-              cantidad: parseFloat(e.target.value),
+              cantidad: parseFloat(e.target.value) || 0,
             }))
           }
         />
-       <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
-      <select
-        value={selectedCosecha?.unidades_de_medida || 0}
-        onChange={(e) =>
-          setSelectedCosecha((prev: any) => ({
-            ...prev,
-            unidades_de_medida: parseInt(e.target.value),
-          }))
-          
-        }
-        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
-      >
-        <option value="">Seleccione una unidad</option>
-        {unidadesMedida?.map((unidad: UnidadMedida) => (
-          <option key={unidad.id} value={unidad.id}>{unidad.nombre}</option>
-        ))}
-      </select>
-    </div>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+          <select
+            value={selectedCosecha?.unidad_medida_id || ""}
+            onChange={(e) =>
+              setSelectedCosecha((prev: any) => ({
+                ...prev,
+                unidad_medida_id: parseInt(e.target.value) || null,
+              }))
+            }
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Seleccione una unidad</option>
+            {unidadesMedida?.map((unidad: UnidadMedida) => (
+              <option key={unidad.id} value={unidad.id}>
+                {unidad.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
         <ReuInput
           label="Fecha"
           placeholder="Ingrese la fecha"
           type="date"
-          value={selectedCosecha?.fecha || ''}
+          value={selectedCosecha?.fecha || ""}
           onChange={(e) =>
             setSelectedCosecha((prev: any) => ({
               ...prev,
-              fecha: e.target.value,
+              fecha: e.target.value, // Formato yyyy-MM-dd desde el input
             }))
           }
         />
