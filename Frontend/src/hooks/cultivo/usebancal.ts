@@ -82,7 +82,7 @@ const actualizarBancal = async (id: number, bancal: any) => {
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
-    const response = await api.put(`${API_URL}${id}/`, bancal, {
+    const response = await api.put(`${API_URL}/${id}/`, bancal, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
