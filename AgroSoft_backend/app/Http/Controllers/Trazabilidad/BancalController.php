@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Trazabilidad;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Trazabilidad\Bancal;
+use App\Http\Requests\Trazabilidad\StoreBancalRequest;
+use App\Http\Requests\Trazabilidad\UpdateBancalRequest;
 
 class BancalController extends Controller
 {
@@ -22,35 +23,12 @@ class BancalController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreBancalRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:15|unique:bancals',
-            'tam_x' => 'nullable|numeric|between:0,999.99',
-            'tam_y' => 'nullable|numeric|between:0,999.99',
-            'latitud' => 'nullable|numeric|between:-999.999999,999.999999',
-            'longitud' => 'nullable|numeric|between:-999.999999,999.999999',
-            'lote_id' => 'required|exists:lotes,id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $bancal = Bancal::create($request->only([
-            'nombre',
-            'tam_x',
-            'tam_y',
-            'latitud',
-            'longitud',
-            'lote_id',
-        ]));
-       return response()->json([
-        'mensaje' => 'Bancal registrado con éxito',
-        'bancal' => $bancal,
-        ], 201);
-
+        $bancal = Bancal::create($request->validated());
+        return response()->json($bancal, 201);
     }
+
 
     /**
      * Display the specified resource.
@@ -64,21 +42,8 @@ class BancalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Bancal $bancal): JsonResponse
+    public function update(UpdateBancalRequest $request, Bancal $bancal): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:15|unique:bancals,nombre,' . $bancal->id,
-            'tam_x' => 'nullable|numeric|between:0,999.99',
-            'tam_y' => 'nullable|numeric|between:0,999.99',
-            'latitud' => 'nullable|numeric|between:-999.999999,999.999999',
-            'longitud' => 'nullable|numeric|between:-999.999999,999.999999',
-            'lote_id' => 'required|exists:lotes,id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
         $bancal->update($request->only([
             'nombre',
             'tam_x',
