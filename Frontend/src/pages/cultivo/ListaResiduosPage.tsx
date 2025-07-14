@@ -56,7 +56,9 @@ const columns = [
     };
   
 const transformedData = (residuos ?? []).map((residuo) => {
-    const cosechaNombre = cosechas?.find(c => c.id === residuo.id_cosecha)?.cultivo_nombre || 'Desconocido';
+const cosechaNombre = cosechas
+  ?.find(c => c.id === residuo.id_cosecha)
+  ?.cultivo?.nombre || 'Desconocido';
     
     const tipoResiduoNombre = tiposResiduos?.find(t => t.id === residuo.id_tipo_residuo)?.nombre || 'Desconocido';
 
@@ -112,7 +114,7 @@ const transformedData = (residuos ?? []).map((residuo) => {
           <ReuModal
             isOpen={isEditModalOpen}
             onOpenChange={setIsEditModalOpen}
-            title="Editar Tipo de Especie"
+            title="Editar tipo de residuo"
             onConfirm={() => {
               if (selectedResiduo && selectedResiduo.id !== undefined) {
                 actualizarMutation.mutate(
@@ -157,7 +159,7 @@ const transformedData = (residuos ?? []).map((residuo) => {
           <ReuModal
             isOpen={isDeleteModalOpen}
             onOpenChange={setIsDeleteModalOpen}
-            title="¿Estás seguro de eliminar esta especie?"
+            title="¿Estás seguro de eliminar este tipo de residuo?"
             onConfirm={handleConfirmDelete}
           >
             <p>Esta acción es irreversible.</p>

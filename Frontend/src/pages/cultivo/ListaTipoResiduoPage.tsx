@@ -44,7 +44,7 @@ const ListaTipoResiduoPage: React.FC = () => {
     }
   };
 
-  const transformedData = (tipoResiduos ?? []).map((tipoResiduos) => ({
+  const transformedData = Array.isArray(tipoResiduos) && tipoResiduos.map((tipoResiduos) => ({
     id: tipoResiduos.id?.toString() || '',
     nombre: tipoResiduos.nombre,
     descripcion: tipoResiduos.descripcion,
@@ -74,7 +74,7 @@ const ListaTipoResiduoPage: React.FC = () => {
           className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
                      hover:bg-green-700 transition-all duration-300 ease-in-out 
                      shadow-md hover:shadow-lg transform hover:scale-105"
-          onClick={() => navigate('/cultivo/tipoespecie')} 
+          onClick={() => navigate('/cultivo/tiporesiduo')} 
         >
           + Registrar
         </button>

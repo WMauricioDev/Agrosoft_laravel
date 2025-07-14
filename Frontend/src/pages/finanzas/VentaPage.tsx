@@ -16,7 +16,7 @@ const VentaPage: React.FC = () => {
   const [detalle, setDetalle] = useState<DetalleVenta>({
     producto: 0,
     cantidad: 0,
-    unidades_de_medida: 0,
+    unidad_medidas: 0,
     total: 0,
   });
 
@@ -36,7 +36,7 @@ const VentaPage: React.FC = () => {
     const { value } = e.target;
     setDetalle((prev) => ({
       ...prev,
-      [field]: field === "cantidad" || field === "producto" || field === "unidades_de_medida" 
+      [field]: field === "cantidad" || field === "producto" || field === "unidad_medidas" 
         ? Number(value) 
         : value,
     }));
@@ -57,7 +57,7 @@ const agregarDetalle = () => {
       setDetalle({
         producto: 0,
         cantidad: 0,
-        unidades_de_medida: 0,
+        unidad_medidas: 0,
         total: 0,
       })
   );
@@ -87,7 +87,7 @@ const agregarDetalle = () => {
     const productoSeleccionado = precio_producto?.find(p => p.id === detalle.producto);
     const productoNombre = productoSeleccionado?.nombre_cultivo || "Desconocido";
 
-    const unidadNombre = unidadesMedida?.find(u => u.id === detalle.unidades_de_medida)?.nombre?.toString() || "unidad";
+    const unidadNombre = unidadesMedida?.find(u => u.id === detalle.unidad_medidas)?.nombre?.toString() || "unidad";
     const precio = productoSeleccionado?.precio || 0;
     const total = detalle.total || 0;
     
@@ -139,7 +139,7 @@ const agregarDetalle = () => {
           setDetalle({
             producto: 0,
             cantidad: 0,
-            unidades_de_medida: 0,
+            unidad_medidas: 0,
             total: 0,
           });
           setIsModalOpen(false);
@@ -253,8 +253,8 @@ const agregarDetalle = () => {
                   </button>
                 </div>
                 <select
-                  value={detalle.unidades_de_medida}
-                  onChange={handleChange("unidades_de_medida")}
+                  value={detalle.unidad_medidas}
+                  onChange={handleChange("unidad_medidas")}
                   className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   disabled={loadingUnidadesMedida}
                 >

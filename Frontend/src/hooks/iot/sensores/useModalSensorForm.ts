@@ -12,7 +12,7 @@ interface UseModalSensorFormProps {
 }
 
 export const useModalSensorForm = ({
-  sensor,
+  sensor, 
   tipoSensores,
   bancales,
   onConfirm,
@@ -32,10 +32,10 @@ export const useModalSensorForm = ({
     }
 
     const tipoSensor = tipoSensores.find((type) => type.nombre === sensor.tipo_sensor) || null;
-    const updatedSensor = {
+    const updatedSensor: Sensor = {
       ...sensor,
-      tipo_sensor_id: tipoSensor ? tipoSensor.id : sensor.tipo_sensor_id || 0,
-      unidad_medida: tipoSensor ? tipoSensor.unidad_medida : sensor.unidad_medida || "",
+      tipo_sensor_id: tipoSensor ? tipoSensor.tipo_sensor_id : sensor.tipo_sensor_id || 0,
+      unidad_medida: tipoSensor ? tipoSensor.unidad_medida || "" : sensor.unidad_medida || "",
     };
 
     console.log("[useModalSensorForm] Actualizando editedSensor: ", updatedSensor);
@@ -72,18 +72,18 @@ export const useModalSensorForm = ({
           });
           return prev;
         }
-        const newSensor = {
+        const newSensor: Sensor = {
           ...prev,
           tipo_sensor: value,
-          tipo_sensor_id: tipoSensor.id,
+          tipo_sensor_id: tipoSensor.tipo_sensor_id,
           unidad_medida: tipoSensor.unidad_medida || "",
-          medida_minima: tipoSensor.medida_minima || 0,
-          medida_maxima: tipoSensor.medida_maxima || 0,
+          medida_minima: tipoSensor.medida_minima ?? prev.medida_minima,
+          medida_maxima: tipoSensor.medida_maxima ?? prev.medida_maxima,
         };
         console.log("[useModalSensorForm] Nuevo estado de editedSensor tras cambio de tipo_sensor: ", newSensor);
         return newSensor;
       }
-      const newSensor = {
+      const newSensor: Sensor = {
         ...prev,
         [field]:
           field === "medida_minima" || field === "medida_maxima"

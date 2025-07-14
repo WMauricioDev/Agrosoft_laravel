@@ -94,7 +94,7 @@ const actualizarTipoActividad = async (id: number, tipoActividad: TipoActividad)
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
-    const response = await api.put(`${API_URL}${id}/`, tipoActividad, {
+    const response = await api.put(`${API_URL}/${id}/`, tipoActividad, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

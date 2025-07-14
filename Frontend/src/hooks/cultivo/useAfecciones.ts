@@ -3,10 +3,10 @@ import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { Afeccion, AfeccionDetalle } from "@/types/cultivo/Afeccion";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL =`${BASE_URL}/cultivo/afecciones/`;
+const API_URL =`${BASE_URL}/api/afecciones/`;
 
 const fetchAfecciones = async (): Promise<AfeccionDetalle[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -14,7 +14,7 @@ const fetchAfecciones = async (): Promise<AfeccionDetalle[]> => {
 };
 
 const fetchAfeccion = async (id: number): Promise<AfeccionDetalle> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   const response = await api.get(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -22,20 +22,20 @@ const fetchAfeccion = async (id: number): Promise<AfeccionDetalle> => {
 };
 
 const crearAfeccion = async (afeccion: Omit<Afeccion, 'id' | 'estado'>) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   return api.post(API_URL, afeccion, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 const actualizarAfeccion = async (id: number, afeccion: Partial<Afeccion>) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   return api.patch(`${API_URL}${id}/`, afeccion, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 const eliminarAfeccion = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   return api.delete(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -43,7 +43,7 @@ const eliminarAfeccion = async (id: number) => {
 
 
 const cambiarEstadoAfeccion = async (id: number, estado: 'ST' | 'EC' | 'EL') => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   
   const url = `${API_URL}${id}/cambiar_estado/`;
   console.log("URL de la petición:", url);

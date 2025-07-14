@@ -4,10 +4,10 @@ import { addToast } from "@heroui/react";
 import { Herramienta } from "@/types/inventario/Herramientas";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/inventario/herramientas/`;
+const API_URL = `${BASE_URL}/api/herramientas/`;
 
 const fetchHerramientas = async (): Promise<Herramienta[]> => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -30,7 +30,7 @@ export const useHerramientas = () => {
 };
 
 const registrarHerramienta = async (herramienta: Omit<Herramienta, "id">) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -81,7 +81,7 @@ interface ActualizarHerramientaParams {
 }
 
 const actualizarHerramienta = async (id: number, herramienta: Omit<Herramienta, "id">) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
@@ -127,7 +127,7 @@ export const useActualizarHerramienta = () => {
 };
 
 const eliminarHerramienta = async (id: number) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accesso_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {

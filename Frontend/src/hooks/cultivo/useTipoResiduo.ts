@@ -5,19 +5,19 @@ import { TipoResiduo } from "@/types/cultivo/TipoResiduo";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/cultivo/tipos_residuos/`;
+const API_URL = `${BASE_URL}/api/tipo_residuo/`;
 
 const fetchTipoResiduos = async (): Promise<TipoResiduo[]> => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data;
+  return response.data.data;
 };
 
 const registrarTipoResiduo = async (tipoResiduo: TipoResiduo) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   const formData = new FormData();
@@ -33,7 +33,7 @@ const registrarTipoResiduo = async (tipoResiduo: TipoResiduo) => {
 };
 
 const actualizarTipoResiduo = async (id: number, tipoResiduo: TipoResiduo) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.put(`${API_URL}${id}/`, tipoResiduo, {
@@ -42,7 +42,7 @@ const actualizarTipoResiduo = async (id: number, tipoResiduo: TipoResiduo) => {
 };
 
 const eliminarTipoResiduo = async (id: number) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   return api.delete(`${API_URL}${id}/`, {

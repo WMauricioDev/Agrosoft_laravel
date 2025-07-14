@@ -12,7 +12,7 @@ import { SensorCharts } from "@/components/Iot/sensores/SensorCharts";
 
 const dataTypes: TipoSensor[] = [
   {
-    label: "Temperatura (°C)",
+    nombre: "Temperatura (°C)",
     key: "temperatura",
     icon: <i className="fas fa-thermometer-half text-red-500" />,
     tipo_sensor_id: 1,
@@ -20,7 +20,7 @@ const dataTypes: TipoSensor[] = [
     unidad_medida: "°C",
   },
   {
-    label: "Humedad (%)",
+    nombre: "Humedad (%)",
     key: "humedad_ambiente",
     icon: <i className="fas fa-tint text-blue-500" />,
     tipo_sensor_id: 2,

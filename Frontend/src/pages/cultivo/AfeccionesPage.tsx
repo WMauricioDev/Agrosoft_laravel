@@ -21,7 +21,6 @@ const AfeccionesPage: React.FC = () => {
     plaga_id: 0,
     cultivo_id: 0,
     bancal_id: 0,
-    reporte: null
   });
 
   const { data: plagas } = usePlagas();

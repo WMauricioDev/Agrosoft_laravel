@@ -11,11 +11,11 @@ export const useReporte = (modulo: string, reporte: string, params: { fecha_inic
                 return null;
             }
 
-            const response = await api.get(`${BASE_URL}/${modulo}/${reporte}/reporte_pdf/`, {
+            const response = await api.get(`${BASE_URL}/api/${modulo}/${reporte}`, {
                 params,
                 responseType: "blob", 
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                    Authorization: `Bearer ${localStorage.getItem("accesso_token")}`,
                 },
             });
 

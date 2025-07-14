@@ -41,7 +41,9 @@ const menuItems = [
       { id: 12, label: "Actividades", path: "/cultivo/listaractividad/" },
       { id: 14, label: "Cosecha", path: "/cultivo/listarcosechas/" },
       { id: 99, label: "Trazabilidad", path: "/cultivo/trazabilidad/" },
-      { id: 100, label: "Residuos", path: "/cultivo/listaresiduo/" },
+      { id: 99, label: "Trazabilidad", path: "/cultivo/trazabilidad/" },
+      { id: 100, label: "Tipo Residuos", path: "/cultivo/listatiporesiduo/" },
+      { id: 101, label: "Residuos", path: "/cultivo/listaresiduo/" },
 
 
     ],
