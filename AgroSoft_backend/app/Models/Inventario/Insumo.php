@@ -3,7 +3,7 @@
 namespace App\Models\Inventario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Trazabilidad\unidadMedida;
+use App\Models\Trazabilidad\UnidadMedida;
 
 class Insumo extends Model
 {

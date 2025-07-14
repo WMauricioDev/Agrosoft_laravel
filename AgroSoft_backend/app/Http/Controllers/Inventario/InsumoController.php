@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Inventario\Insumo;
+use App\Http\Requests\Inventario\UpdateInsumoRequest;
 
 class InsumoController extends Controller
 {
@@ -71,27 +72,18 @@ class InsumoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Insumo $insumo): JsonResponse
+    public function update(UpdateInsumoRequest $request, Insumo $insumo): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'nombre' => 'required|string|max:255',
-                'descripcion' => 'required|string',
-                'cantidad' => 'required|integer|min:1',
-                'unidad_medida_id' => 'nullable|exists:unidad_medidas,id',
-                'tipo_insumo_id' => 'nullable|exists:tipo_insumos,id',
-                'activo' => 'boolean',
-                'tipo_empacado' => 'nullable|string|max:100',
-                'fecha_caducidad' => 'nullable|date',
-                'precio_insumo' => 'required|numeric|min:0',
-            ]);
-
+            $validated = $request->validated();
+    
             Log::info('Validated Insumo update data', ['id' => $insumo->id, 'data' => $validated]);
-
+    
             $insumo->update($validated);
             $insumo->load(['unidadMedida', 'tipoInsumo']);
+    
             Log::info('Updated Insumo', ['id' => $insumo->id]);
-
+    
             return response()->json($insumo);
         } catch (\Exception $e) {
             Log::error('Failed to update Insumo', [
@@ -99,6 +91,7 @@ class InsumoController extends Controller
                 'error' => $e->getMessage(),
                 'data' => $request->all(),
             ]);
+    
             return response()->json(['error' => 'Failed to update Insumo: ' . $e->getMessage()], 500);
         }
     }

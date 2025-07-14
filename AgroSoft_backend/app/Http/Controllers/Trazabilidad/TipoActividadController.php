@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Trazabilidad\TipoActividad;
+use App\Http\Requests\Trazabilidad\StoreTipoActividadRequest;
 
 class TipoActividadController extends Controller
 {
@@ -22,19 +23,10 @@ class TipoActividadController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreTipoActividadRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:255|unique:tipo_actividades',
-            'descripcion' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $tipo = TipoActividad::create($request->only(['nombre', 'descripcion']));
-        return response()->json($tipo, 201);
+        $tipos = TipoActividad::create($request->validated());
+        return response()->json($tipos, 201);
     }
 
     /**

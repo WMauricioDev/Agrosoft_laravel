@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Trazabilidad;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Trazabilidad\Lote;
+use App\Http\Requests\Trazabilidad\StoreLoteRequest;
+use App\Http\Requests\Trazabilidad\UpdateLoteRequest;
 
 class LoteController extends Controller
 {
@@ -22,33 +22,13 @@ class LoteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreLoteRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:15|unique:lotes',
-            'descripcion' => 'nullable|string',
-            'activo' => 'required|boolean',
-            'tam_x' => 'required|numeric|between:0,999.99',
-            'tam_y' => 'required|numeric|between:0,999.99',
-            'latitud' => 'required|numeric|between:-999.999999,999.999999',
-            'longitud' => 'required|numeric|between:-999.999999,999.999999',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $lote = Lote::create($request->only([
-            'nombre',
-            'descripcion',
-            'activo',
-            'tam_x',
-            'tam_y',
-            'latitud',
-            'longitud',
-        ]));
+        $lote = Lote::create($request->validated());
         return response()->json($lote, 201);
     }
+
+
 
     /**
      * Display the specified resource.
@@ -61,21 +41,9 @@ class LoteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Lote $lote): JsonResponse
+    public function update(UpdateLoteRequest $request, Lote $lote): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:15|unique:lotes,nombre,' . $lote->id,
-            'descripcion' => 'nullable|string',
-            'activo' => 'required|boolean',
-            'tam_x' => 'required|numeric|between:0,999.99',
-            'tam_y' => 'required|numeric|between:0,999.99',
-            'latitud' => 'required|numeric|between:-999.999999,999.999999',
-            'longitud' => 'required|numeric|between:-999.999999,999.999999',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+       
 
         $lote->update($request->only([
             'nombre',
