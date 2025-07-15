@@ -289,10 +289,6 @@ Route::middleware(IsUserAuth::class)->group(function () {
         ->name('pagos.index');
     Route::get('pagos/{pago}', [PagoController::class, 'show'])
         ->name('pagos.show');
-    Route::post('pagos', [PagoController::class, 'store'])
-        ->name('pagos.store')->middleware([IsAdmin::class, IsUserAuth::class]);
-    Route::put('pagos/{pago}', [PagoController::class, 'update'])
-        ->name('pagos.update')->middleware([IsAdmin::class, IsUserAuth::class]);
     Route::delete('pagos/{pago}', [PagoController::class, 'destroy'])
         ->name('pagos.destroy')->middleware([IsAdmin::class, IsUserAuth::class]);
     Route::post('pagos/calcular', [PagoController::class, 'calcular'])
