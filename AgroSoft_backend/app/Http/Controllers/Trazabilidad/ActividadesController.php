@@ -6,14 +6,20 @@ use App\Models\Inventario\Insumo;
 use App\Models\Inventario\BodegaHerramienta;
 use App\Models\Trazabilidad\PrestamoInsumo;
 use App\Models\Trazabilidad\PrestamoHerramienta;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Trazabilidad\Actividades;
+use App\Http\Requests\Trazabilidad\StoreActividadRequest;
+use App\Http\Requests\Trazabilidad\UpdateActividadRequest;
+use App\Http\Requests\Trazabilidad\FinalizarActividadRequest;
+
 class ActividadesController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(): JsonResponse
     {
         $actividades = Actividades::with(['tipoActividad', 'cultivo', 'usuarios', 'prestamosInsumos.insumo', 'prestamosHerramientas.herramienta'])->orderBy('fecha_fin', 'desc')->get();
@@ -21,32 +27,13 @@ class ActividadesController extends Controller
         return response()->json($actividades);
     }
 
-    public function store(Request $request): JsonResponse
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreActividadRequest $request): JsonResponse
     {
         try {
-            Log::info('Payload recibido en store', ['data' => $request->all()]);
-            $validated = $request->validate([
-                'tipo_actividad_id' => 'required|exists:tipo_actividades,id',
-                'descripcion' => 'required|string',
-                'fecha_inicio' => 'required|date',
-                'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
-                'cultivo_id' => 'required|exists:cultivos,id',
-                'estado' => 'required|in:PENDIENTE,EN_PROCESO,COMPLETADA,CANCELADA',
-                'prioridad' => 'required|in:ALTA,MEDIA,BAJA',
-                'instrucciones_adicionales' => 'nullable|string',
-                'usuarios' => 'required|array',
-                'usuarios.*' => 'exists:users,id',
-                'insumos' => 'nullable|array',
-                'insumos.*.insumo_id' => 'required|exists:insumos,id',
-                'insumos.*.cantidad_usada' => 'required|integer|min:0',
-                'herramientas' => 'nullable|array',
-                'herramientas.*.herramienta_id' => 'required|exists:herramientas,id',
-                'herramientas.*.cantidad_entregada' => 'required|integer|min:1',
-                'herramientas.*.entregada' => 'nullable|boolean',
-                'herramientas.*.devuelta' => 'nullable|boolean',
-                'herramientas.*.fecha_devolucion' => 'nullable|date',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated Actividad data', ['data' => $validated]);
 
             $actividad = DB::transaction(function () use ($validated) {
@@ -117,6 +104,9 @@ class ActividadesController extends Controller
         }
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(Actividades $actividad): JsonResponse
     {
         Log::info('Fetched Actividad', ['id' => $actividad->id]);
@@ -124,31 +114,13 @@ class ActividadesController extends Controller
         return response()->json($actividad);
     }
 
-    public function update(Request $request, Actividades $actividad): JsonResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateActividadRequest $request, Actividades $actividad): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'tipo_actividad_id' => 'required|exists:tipo_actividades,id',
-                'descripcion' => 'required|string',
-                'fecha_inicio' => 'required|date',
-                'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
-                'cultivo_id' => 'required|exists:cultivos,id',
-                'estado' => 'required|in:PENDIENTE,EN_PROCESO,COMPLETADA,CANCELADA',
-                'prioridad' => 'required|in:ALTA,MEDIA,BAJA',
-                'instrucciones_adicionales' => 'nullable|string',
-                'usuarios' => 'nullable|array',
-                'usuarios.*' => 'exists:users,id',
-                'insumos' => 'nullable|array',
-                'insumos.*.insumo_id' => 'required|exists:insumos,id',
-                'insumos.*.cantidad_usada' => 'required|integer|min:0',
-                'herramientas' => 'nullable|array',
-                'herramientas.*.herramienta_id' => 'required|exists:herramientas,id',
-                'herramientas.*.cantidad_entregada' => 'required|integer|min:1',
-                'herramientas.*.entregada' => 'nullable|boolean',
-                'herramientas.*.devuelta' => 'nullable|boolean',
-                'herramientas.*.fecha_devolucion' => 'nullable|date',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated Actividad update data', ['id' => $actividad->id, 'data' => $validated]);
 
             $actividad = DB::transaction(function () use ($actividad, $validated) {
@@ -237,6 +209,9 @@ class ActividadesController extends Controller
         }
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(Actividades $actividad): JsonResponse
     {
         try {
@@ -250,17 +225,17 @@ class ActividadesController extends Controller
         }
     }
 
-    public function finalizar(Request $request, Actividades $actividad): JsonResponse
+    /**
+     * Finalize the specified activity.
+     */
+    public function finalizar(FinalizarActividadRequest $request, Actividades $actividad): JsonResponse
     {
         try {
             if ($actividad->estado === 'COMPLETADA') {
                 return response()->json(['error' => 'Esta actividad ya está completada'], 400);
             }
 
-            $validated = $request->validate([
-                'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated Finalizar Actividad data', ['id' => $actividad->id, 'data' => $validated]);
 
             $actividad = DB::transaction(function () use ($actividad, $validated) {
