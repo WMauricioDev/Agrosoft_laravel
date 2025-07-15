@@ -5,8 +5,7 @@ namespace App\Http\Requests\Trazabilidad;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
-
-class StoreTipoEspecieRequest extends FormRequest
+class FinalizarActividadRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,27 +23,21 @@ class StoreTipoEspecieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'required|string|max:30|unique:tipo_especies,nombre,' . $this->tipo_especie?->id,
-            'descripcion' => 'required|string',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
         ];
     }
-     protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
             'errors' => $validator->errors()
         ], 422));
     }
-
     public function messages(): array
     {
         return [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.string' => 'El nombre debe ser una cadena de texto.',
-            'nombre.max' => 'El nombre no puede exceder los 30 caracteres.',
-            'nombre.unique' => 'El nombre ya está registrado.',
-
-            'descripcion.required' => 'La descripción es obligatoria.',
-            'descripcion.string' => 'La descripción debe ser una cadena de texto.',
+            'fecha_fin.required' => 'La fecha de fin es obligatoria.',
+            'fecha_fin.date' => 'La fecha de fin debe ser una fecha válida.',
+            'fecha_fin.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
         ];
     }
 }
