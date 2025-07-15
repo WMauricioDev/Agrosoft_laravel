@@ -3,56 +3,110 @@
 namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Inventario\TipoInsumo;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\Inventario\TipoInsumo;
+use App\Http\Requests\Inventario\StoreTipoInsumoRequest;
+use App\Http\Requests\Inventario\UpdateTipoInsumoRequest;
 
 class TipoInsumoController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(): JsonResponse
     {
-        $tiposInsumo = TipoInsumo::all();
-        return response()->json($tiposInsumo);
+        try {
+            $tiposInsumo = TipoInsumo::all();
+            Log::info('Fetched all TipoInsumo records', ['count' => $tiposInsumo->count()]);
+            return response()->json($tiposInsumo);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch TipoInsumo records', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Error al obtener los tipos de insumo: ' . $e->getMessage()], 500);
+        }
     }
 
-    public function store(Request $request): JsonResponse
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreTipoInsumoRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:50|unique:tipo_insumos,nombre',
-            'descripcion' => 'nullable|string',
-            'creada_por_usuario' => 'boolean',
-        ]);
+        try {
+            $validated = $request->validated();
+            Log::info('Validated TipoInsumo data', ['data' => $validated]);
 
-        $tipoInsumo = TipoInsumo::create($validated);
-        return response()->json($tipoInsumo, 201);
+            $tipoInsumo = DB::transaction(function () use ($validated) {
+                return TipoInsumo::create($validated);
+            });
+
+            Log::info('Created TipoInsumo', ['id' => $tipoInsumo->id, 'nombre' => $tipoInsumo->nombre]);
+            return response()->json($tipoInsumo, 201);
+        } catch (\Exception $e) {
+            Log::error('Failed to create TipoInsumo', [
+                'error' => $e->getMessage(),
+                'data' => $request->all(),
+            ]);
+            return response()->json(['error' => 'Error al crear el tipo de insumo: ' . $e->getMessage()], 500);
+        }
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(TipoInsumo $tipoInsumo): JsonResponse
     {
-        return response()->json($tipoInsumo);
+        try {
+            Log::info('Fetched TipoInsumo', ['id' => $tipoInsumo->id]);
+            return response()->json($tipoInsumo);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch TipoInsumo', [
+                'id' => $tipoInsumo->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Error al obtener el tipo de insumo: ' . $e->getMessage()], 500);
+        }
     }
 
-    public function update(Request $request, TipoInsumo $tipoInsumo): JsonResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateTipoInsumoRequest $request, TipoInsumo $tipoInsumo): JsonResponse
     {
-        $validated = $request->validate([
-            'nombre' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('tipo_insumos', 'nombre')->ignore($tipoInsumo->id),
-            ],
-            'descripcion' => 'nullable|string',
-            'creada_por_usuario' => 'boolean',
-        ]);
+        try {
+            $validated = $request->validated();
+            Log::info('Validated TipoInsumo update data', ['id' => $tipoInsumo->id, 'data' => $validated]);
 
-        $tipoInsumo->update($validated);
-        return response()->json($tipoInsumo);
+            $tipoInsumo->update($validated);
+            Log::info('Updated TipoInsumo', ['id' => $tipoInsumo->id]);
+
+            return response()->json($tipoInsumo);
+        } catch (\Exception $e) {
+            Log::error('Failed to update TipoInsumo', [
+                'id' => $tipoInsumo->id,
+                'error' => $e->getMessage(),
+                'data' => $request->all(),
+            ]);
+            return response()->json(['error' => 'Error al actualizar el tipo de insumo: ' . $e->getMessage()], 500);
+        }
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(TipoInsumo $tipoInsumo): JsonResponse
     {
-        $tipoInsumo->delete();
-        return response()->json(null, 204);
+        try {
+            Log::info('Deleting TipoInsumo', ['id' => $tipoInsumo->id]);
+            $tipoInsumo->delete();
+            Log::info('Deleted TipoInsumo', ['id' => $tipoInsumo->id]);
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete TipoInsumo', [
+                'id' => $tipoInsumo->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Error al eliminar el tipo de insumo: ' . $e->getMessage()], 500);
+        }
     }
 }

@@ -314,7 +314,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
             ->name('insumos.show');
         Route::put('insumos/{insumos}', [InsumoController::class, 'update'])
             ->name('insumos.update');
-        Route::delete('insumos/{elemento}', [InsumoController::class, 'destroy'])
+        Route::delete('insumos/{insumos}', [InsumoController::class, 'destroy'])
             ->name('insumos.destroy');
      // Bodega Insumos
         Route::get('bodega_insumo', [BodegaInsumoController::class, 'index'])

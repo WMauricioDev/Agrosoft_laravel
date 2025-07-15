@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Inventario\Insumo;
+use App\Http\Requests\Inventario\StoreInsumoRequest;
 use App\Http\Requests\Inventario\UpdateInsumoRequest;
 
 class InsumoController extends Controller
@@ -25,20 +25,10 @@ class InsumoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreInsumoRequest $request): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'nombre' => 'required|string|max:255',
-                'descripcion' => 'required|string',
-                'cantidad' => 'required|integer|min:1',
-                'unidad_medida_id' => 'nullable|exists:unidad_medidas,id',
-                'tipo_insumo_id' => 'nullable|exists:tipo_insumos,id',
-                'activo' => 'boolean',
-                'tipo_empacado' => 'nullable|string|max:100',
-                'fecha_caducidad' => 'nullable|date',
-                'precio_insumo' => 'required|numeric|min:0',
-            ]);
+            $validated = $request->validated();
 
             Log::info('Validated Insumo data', ['data' => $validated]);
 

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Inventario;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Inventario\BodegaHerramienta;
 use App\Models\Inventario\Herramienta;
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventario\StoreBodegaHerramientaRequest;
+use App\Http\Requests\Inventario\UpdateBodegaHerramientaRequest;
 
 class BodegaHerramientaController extends Controller
 {
@@ -17,35 +18,35 @@ class BodegaHerramientaController extends Controller
      */
     public function index(): JsonResponse
     {
-        $bodegaHerramientas = BodegaHerramienta::with(['herramienta'])->get()->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'bodega' => $item->bodega_id,
-                'herramienta' => $item->herramienta_id,
-                'cantidad' => $item->cantidad,
-                'costo_total' => $item->costo_total ?? 0,
-                'cantidad_prestada' => $item->cantidad_prestada ?? 0,
-                'creador' => $item->creador_id,
-            ];
-        });
+        try {
+            $bodegaHerramientas = BodegaHerramienta::with(['herramienta'])->get()->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'bodega' => $item->bodega_id,
+                    'herramienta' => $item->herramienta_id,
+                    'cantidad' => $item->cantidad,
+                    'costo_total' => $item->costo_total ?? 0,
+                    'cantidad_prestada' => $item->cantidad_prestada ?? 0,
+                    'creador' => $item->creador_id,
+                ];
+            });
 
-        Log::info('Fetched all BodegaHerramienta records', ['count' => count($bodegaHerramientas)]);
-        return response()->json($bodegaHerramientas);
+            Log::info('Fetched all BodegaHerramienta records', ['count' => count($bodegaHerramientas)]);
+            return response()->json($bodegaHerramientas);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch BodegaHerramienta records', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Error al obtener los registros de BodegaHerramienta: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreBodegaHerramientaRequest $request): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'bodega' => 'required|exists:bodegas,id',
-                'herramienta' => 'required|exists:herramientas,id',
-                'cantidad' => 'required|integer|min:1',
-                'creador' => 'nullable|exists:users,id',
-                'cantidad_prestada' => 'nullable|integer|min:0',
-            ]);
+            $validated = $request->validated();
+            Log::info('Validated BodegaHerramienta data', ['data' => $validated]);
 
             // Obtener el precio de la herramienta
             $herramienta = Herramienta::findOrFail($validated['herramienta']);
@@ -60,8 +61,6 @@ class BodegaHerramientaController extends Controller
                 'cantidad_prestada' => $validated['cantidad_prestada'] ?? 0,
                 'costo_total' => $precio * $validated['cantidad'],
             ];
-
-            Log::info('Validated BodegaHerramienta data', ['data' => $data]);
 
             $bodegaHerramienta = DB::transaction(function () use ($data) {
                 return BodegaHerramienta::create($data);
@@ -85,7 +84,7 @@ class BodegaHerramientaController extends Controller
                 'error' => $e->getMessage(),
                 'data' => $request->all(),
             ]);
-            return response()->json(['error' => 'Failed to create BodegaHerramienta: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al crear BodegaHerramienta: ' . $e->getMessage()], 500);
         }
     }
 
@@ -94,33 +93,35 @@ class BodegaHerramientaController extends Controller
      */
     public function show(BodegaHerramienta $bodegaHerramienta): JsonResponse
     {
-        Log::info('Fetched BodegaHerramienta', ['id' => $bodegaHerramienta->id]);
-        $response = [
-            'id' => $bodegaHerramienta->id,
-            'bodega' => $bodegaHerramienta->bodega_id,
-            'herramienta' => $bodegaHerramienta->herramienta_id,
-            'cantidad' => $bodegaHerramienta->cantidad,
-            'costo_total' => $bodegaHerramienta->costo_total ?? 0,
-            'cantidad_prestada' => $bodegaHerramienta->cantidad_prestada ?? 0,
-            'creador' => $bodegaHerramienta->creador_id,
-        ];
-        return response()->json($response);
+        try {
+            Log::info('Fetched BodegaHerramienta', ['id' => $bodegaHerramienta->id]);
+            $response = [
+                'id' => $bodegaHerramienta->id,
+                'bodega' => $bodegaHerramienta->bodega_id,
+                'herramienta' => $bodegaHerramienta->herramienta_id,
+                'cantidad' => $bodegaHerramienta->cantidad,
+                'costo_total' => $bodegaHerramienta->costo_total ?? 0,
+                'cantidad_prestada' => $bodegaHerramienta->cantidad_prestada ?? 0,
+                'creador' => $bodegaHerramienta->creador_id,
+            ];
+            return response()->json($response);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch BodegaHerramienta', [
+                'id' => $bodegaHerramienta->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Error al obtener BodegaHerramienta: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, BodegaHerramienta $bodegaHerramienta): JsonResponse
+    public function update(UpdateBodegaHerramientaRequest $request, BodegaHerramienta $bodegaHerramienta): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'bodega' => 'required|exists:bodegas,id',
-                'herramienta' => 'required|exists:herramientas,id',
-                'cantidad' => 'required|integer|min:1',
-                'creador' => 'nullable|exists:users,id',
-                'cantidad_prestada' => 'nullable|integer|min:0',
-                'costo_total' => 'nullable|numeric|min:0', // Permitir que el frontend envíe costo_total
-            ]);
+            $validated = $request->validated();
+            Log::info('Validated BodegaHerramienta update data', ['id' => $bodegaHerramienta->id, 'data' => $validated]);
 
             // Obtener el precio de la herramienta
             $herramienta = Herramienta::findOrFail($validated['herramienta']);
@@ -135,8 +136,6 @@ class BodegaHerramientaController extends Controller
                 'cantidad_prestada' => $validated['cantidad_prestada'] ?? 0,
                 'costo_total' => $validated['costo_total'] ?? ($precio * $validated['cantidad']),
             ];
-
-            Log::info('Validated BodegaHerramienta update data', ['id' => $bodegaHerramienta->id, 'data' => $data]);
 
             $bodegaHerramienta->update($data);
 
@@ -159,7 +158,7 @@ class BodegaHerramientaController extends Controller
                 'error' => $e->getMessage(),
                 'data' => $request->all(),
             ]);
-            return response()->json(['error' => 'Failed to update BodegaHerramienta: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al actualizar BodegaHerramienta: ' . $e->getMessage()], 500);
         }
     }
 
@@ -178,7 +177,7 @@ class BodegaHerramientaController extends Controller
                 'id' => $bodegaHerramienta->id,
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to delete BodegaHerramienta: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al eliminar BodegaHerramienta: ' . $e->getMessage()], 500);
         }
     }
 }

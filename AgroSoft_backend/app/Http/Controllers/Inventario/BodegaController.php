@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Inventario;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Models\Inventario\Bodega;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\Inventario\Bodega;
+use App\Http\Requests\Inventario\StoreBodegaRequest;
+use App\Http\Requests\Inventario\UpdateBodegaRequest;
 
 class BodegaController extends Controller
 {
@@ -14,25 +17,38 @@ class BodegaController extends Controller
      */
     public function index(): JsonResponse
     {
-        $bodegas = Bodega::all();
-        return response()->json($bodegas);
+        try {
+            $bodegas = Bodega::all();
+            Log::info('Fetched all Bodega records', ['count' => $bodegas->count()]);
+            return response()->json($bodegas);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch Bodega records', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Error al obtener las bodegas: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreBodegaRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'telefono' => 'required|string|max:50',
-            'activo' => 'boolean',
-            'capacidad' => 'required|integer|min:0',
-            'ubicacion' => 'nullable|string|max:255',
-        ]);
+        try {
+            $validated = $request->validated();
+            Log::info('Validated Bodega data', ['data' => $validated]);
 
-        $bodega = Bodega::create($validated);
-        return response()->json($bodega, 201);
+            $bodega = DB::transaction(function () use ($validated) {
+                return Bodega::create($validated);
+            });
+
+            Log::info('Created Bodega', ['id' => $bodega->id, 'nombre' => $bodega->nombre]);
+            return response()->json($bodega, 201);
+        } catch (\Exception $e) {
+            Log::error('Failed to create Bodega', [
+                'error' => $e->getMessage(),
+                'data' => $request->all(),
+            ]);
+            return response()->json(['error' => 'Error al crear la bodega: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -40,24 +56,39 @@ class BodegaController extends Controller
      */
     public function show(Bodega $bodega): JsonResponse
     {
-        return response()->json($bodega);
+        try {
+            Log::info('Fetched Bodega', ['id' => $bodega->id]);
+            return response()->json($bodega);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch Bodega', [
+                'id' => $bodega->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Error al obtener la bodega: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Bodega $bodega): JsonResponse
+    public function update(UpdateBodegaRequest $request, Bodega $bodega): JsonResponse
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'telefono' => 'required|string|max:50',
-            'activo' => 'boolean',
-            'capacidad' => 'required|integer|min:0',
-            'ubicacion' => 'nullable|string|max:255',
-        ]);
+        try {
+            $validated = $request->validated();
+            Log::info('Validated Bodega update data', ['id' => $bodega->id, 'data' => $validated]);
 
-        $bodega->update($validated);
-        return response()->json($bodega);
+            $bodega->update($validated);
+            Log::info('Updated Bodega', ['id' => $bodega->id]);
+
+            return response()->json($bodega);
+        } catch (\Exception $e) {
+            Log::error('Failed to update Bodega', [
+                'id' => $bodega->id,
+                'error' => $e->getMessage(),
+                'data' => $request->all(),
+            ]);
+            return response()->json(['error' => 'Error al actualizar la bodega: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -65,7 +96,17 @@ class BodegaController extends Controller
      */
     public function destroy(Bodega $bodega): JsonResponse
     {
-        $bodega->delete();
-        return response()->json(null, 204);
+        try {
+            Log::info('Deleting Bodega', ['id' => $bodega->id]);
+            $bodega->delete();
+            Log::info('Deleted Bodega', ['id' => $bodega->id]);
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete Bodega', [
+                'id' => $bodega->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Error al eliminar la bodega: ' . $e->getMessage()], 500);
+        }
     }
 }
