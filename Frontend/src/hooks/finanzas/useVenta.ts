@@ -5,7 +5,7 @@ import { Venta, DetalleVenta } from "@/types/finanzas/Venta";
 import { PrecioProducto } from "@/types/inventario/Precio_producto";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/api/finanzas/venta/`;
+const API_URL = `${BASE_URL}/api/venta/`;
 
 interface CreateVentaData {
   fecha?: string;
@@ -17,10 +17,13 @@ interface CreateVentaData {
 const fetchVentas = async (): Promise<Venta[]> => {
   const token = localStorage.getItem("accesso_token");
   if (!token) throw new Error("Token no encontrado");
+
   const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data;
+
+  // Devuelve solo el array de ventas
+  return response.data.data;
 };
 
 const registrarVenta = async (ventaData: CreateVentaData): Promise<Venta> => {
@@ -37,7 +40,7 @@ const registrarVenta = async (ventaData: CreateVentaData): Promise<Venta> => {
     detalles: ventaData.detalles.map(detalle => ({
       producto: detalle.producto,
       cantidad: detalle.cantidad,
-      unidades_de_medida: detalle.unidades_de_medida,
+      unidad_medidas: detalle.unidad_medidas,
       total: detalle.total
     }))
   };
@@ -194,7 +197,7 @@ export const useVenta = () => {
   const nuevoDetalle: DetalleVenta = {
     ...detalle,
     total: detalle.cantidad * (productoSeleccionado.precio || 0),
-    unidades_de_medida: detalle.unidades_de_medida || productoSeleccionado.unidad_medida?.id || 0,
+    unidad_medidas: detalle.unidad_medidas || productoSeleccionado.unidad_medida?.id || 0,
   };
 
   if (editIndex !== null) {
