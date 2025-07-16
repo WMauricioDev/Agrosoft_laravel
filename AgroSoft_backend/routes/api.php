@@ -61,7 +61,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('users.index');
 Route::middleware('auth:api')->put('/user/password', [CambiarPasswordController::class, 'cambiarPassword']);
 
-    require __DIR__.'/fallback/userFallback.php';
+    require __DIR__.'/fallback/Usuarios/userFallback.php';
 
     // Traer los roles
     Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
@@ -95,10 +95,13 @@ Route::middleware('auth:api')->put('/user/password', [CambiarPasswordController:
     // Traer y registrar tipo de control- control
     Route::apiResource('tipo_control', TipoControlController::class);
 
+    Route::post('/tipo_control', [TipoControlController::class, 'store']);
     Route::get('/tipo_control/{id}', [TipoControlController::class, 'show']);
     Route::put('/tipo_control/{id}', [TipoControlController::class, 'update']);
     Route::delete('/tipo_control/{id}', [TipoControlController::class, 'destroy']);
     Route::resource('control',ControlesController::class);
+
+    require __DIR__.'/fallback/Trazabilidad/Control_Tipo_control.php';
 
     // Lotes
     Route::get('lotes', [LoteController::class, 'index'])

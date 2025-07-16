@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Trazabilidad;
 use App\Http\Controllers\Controller;
 use App\Models\Trazabilidad\Controles;
 use Illuminate\Http\Request;
+use App\Http\Requests\Trazabilidad\ControlRequest;
 
 class ControlesController extends Controller
 {
@@ -14,7 +15,7 @@ class ControlesController extends Controller
         return response()->json($controles);
     }
 
-    public function store(Request $request)
+    public function store(ControlRequest $request)
     {
         $validated = $request->validate([
             'afeccion_id' => 'required|exists:afecciones,id',
@@ -43,7 +44,7 @@ class ControlesController extends Controller
         return response()->json($control);
     }
 
-    public function update(Request $request, $id)
+    public function update(ControlRequest $request, $id)
     {
         $control = Controles::find($id);
 
