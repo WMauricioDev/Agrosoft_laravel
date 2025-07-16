@@ -17,7 +17,11 @@ class TipoActividadController extends Controller
     public function index(): JsonResponse
     {
         $tipos = TipoActividad::all();
-        return response()->json($tipos);
+        return response()->json([
+            'success' => true,
+            'message' => 'Tipo de actividad obtenido correctamente.',
+            'data' => $tipos,
+        ], 201);
     }
 
     /**

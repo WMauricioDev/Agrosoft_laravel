@@ -81,7 +81,11 @@ class CosechaController extends Controller
     public function index(): JsonResponse
     {
         $cosechas = Cosecha::with(['cultivo', 'unidadMedida'])->get();
-        return response()->json($cosechas);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cosechas obtenidas correctamente.',
+            'data' => $cosechas,
+        ], 201);   
     }
 
     /**
@@ -92,7 +96,11 @@ class CosechaController extends Controller
         $data = $request->validated();
         $cosecha = Cosecha::create($data);
         $cosecha->load(['cultivo', 'unidadMedida']);
-        return response()->json($cosecha, 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cosecha creada correctamente.',
+            'data' => $cosecha,
+        ], 201);   
     }
 
     /**
@@ -101,7 +109,11 @@ class CosechaController extends Controller
     public function show(Cosecha $cosecha): JsonResponse
     {
         $cosecha->load(['cultivo', 'unidadMedida']);
-        return response()->json($cosecha);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cosecha obtenida correctamente.',
+            'data' => $cosecha,
+        ], 201);   
     }
 
     /**
@@ -112,7 +124,11 @@ class CosechaController extends Controller
         $data = $request->validated();
         $cosecha->update($data);
         $cosecha->load(['cultivo', 'unidadMedida']);
-        return response()->json($cosecha);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cosecha actualizada correctamente.',
+            'data' => $cosecha,
+        ], 201);   
     }
 
     /**
@@ -121,6 +137,9 @@ class CosechaController extends Controller
     public function destroy(Cosecha $cosecha): JsonResponse
     {
         $cosecha->delete();
-        return response()->json(null, 204);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cosecha eliminada correctamente.',
+        ], 201);   
     }
 }

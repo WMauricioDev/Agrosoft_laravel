@@ -16,7 +16,11 @@ class LoteController extends Controller
     public function index(): JsonResponse
     {
         $lotes = Lote::all();
-        return response()->json($lotes);
+        return response()->json([
+            'success' => true,
+            'message' => 'Lotes obtenido correctamente.',
+            'data' => $lotes,
+        ], 201);
     }
 
     /**
@@ -25,7 +29,11 @@ class LoteController extends Controller
     public function store(StoreLoteRequest $request): JsonResponse
     {
         $lote = Lote::create($request->validated());
-        return response()->json($lote, 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Lote creado correctamente.',
+            'data' => $lote,
+        ], 201);
     }
 
 
@@ -54,7 +62,11 @@ class LoteController extends Controller
             'latitud',
             'longitud',
         ]));
-        return response()->json($lote);
+        return response()->json([
+            'success' => true,
+            'message' => 'Salario creado correctamente.',
+            'data' => $lote,
+        ], 201);
     }
 
     /**

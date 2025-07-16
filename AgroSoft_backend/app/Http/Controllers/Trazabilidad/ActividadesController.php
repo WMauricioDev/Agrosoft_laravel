@@ -24,8 +24,11 @@ class ActividadesController extends Controller
     {
         $actividades = Actividades::with(['tipoActividad', 'cultivo', 'usuarios', 'prestamosInsumos.insumo', 'prestamosHerramientas.herramienta'])->orderBy('fecha_fin', 'desc')->get();
         Log::info('Fetched all Actividad records', ['count' => $actividades->count()]);
-        return response()->json($actividades);
-    }
+        return response()->json([
+            'success' => true,
+            'message' => 'Actividad obtenida correctamente.',
+            'data' => $actividades,
+        ], 201);    }
 
     /**
      * Store a newly created resource in storage.
@@ -97,8 +100,11 @@ class ActividadesController extends Controller
 
             $actividad->load(['tipoActividad', 'cultivo', 'usuarios', 'prestamosInsumos.insumo', 'prestamosHerramientas.herramienta']);
             Log::info('Created Actividad', ['id' => $actividad->id]);
-            return response()->json($actividad, 201);
-        } catch (\Exception $e) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Actividad creada correctamente.',
+                'data' => $actividad,
+            ], 201);        } catch (\Exception $e) {
             Log::error('Failed to create Actividad', ['error' => $e->getMessage(), 'data' => $request->all()]);
             return response()->json(['error' => 'Failed to create Actividad: ' . $e->getMessage()], 500);
         }
@@ -202,7 +208,11 @@ class ActividadesController extends Controller
 
             $actividad->load(['tipoActividad', 'cultivo', 'usuarios', 'prestamosInsumos.insumo', 'prestamosHerramientas.herramienta']);
             Log::info('Updated Actividad', ['id' => $actividad->id]);
-            return response()->json($actividad);
+            return response()->json([
+                'success' => true,
+                'message' => 'Actividad actualizada correctamente.',
+                'data' => $actividad,
+            ], 201);
         } catch (\Exception $e) {
             Log::error('Failed to update Actividad', ['id' => $actividad->id, 'error' => $e->getMessage(), 'data' => $request->all()]);
             return response()->json(['error' => 'Failed to update Actividad: ' . $e->getMessage()], 500);
@@ -218,7 +228,10 @@ class ActividadesController extends Controller
             Log::info('Deleting Actividad', ['id' => $actividad->id]);
             $actividad->delete();
             Log::info('Deleted Actividad', ['id' => $actividad->id]);
-            return response()->json(null, 204);
+            return response()->json([
+                'success' => true,
+                'message' => 'Actividada eliminada correctamente.',
+            ], 201);
         } catch (\Exception $e) {
             Log::error('Failed to delete Actividad', ['id' => $actividad->id, 'error' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to delete Actividad: ' . $e->getMessage()], 500);
