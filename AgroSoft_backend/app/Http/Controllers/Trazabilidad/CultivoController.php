@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Trazabilidad;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Trazabilidad\Cultivo;
+use App\Http\Requests\Trazabilidad\StoreCultivoRequest;
+use App\Http\Requests\Trazabilidad\UpdateCultivoRequest;
 
 class CultivoController extends Controller
 {
@@ -22,29 +22,10 @@ class CultivoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreCultivoRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'especie_id' => 'required|exists:especies,id',
-            'bancal_id' => 'required|exists:bancals,id',
-            'nombre' => 'required|string|max:50|unique:cultivos',
-            'unidad_medida_id' => 'required|exists:unidad_medidas,id',
-            'activo' => 'required|boolean',
-            'fecha_siembra' => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $cultivo = Cultivo::create($request->only([
-            'especie_id',
-            'bancal_id',
-            'nombre',
-            'unidad_medida_id',
-            'activo',
-            'fecha_siembra',
-        ]));
+        $data = $request->validated();
+        $cultivo = Cultivo::create($data);
         $cultivo->load(['especie', 'bancal', 'unidadMedida']);
         return response()->json($cultivo, 201);
     }
@@ -61,29 +42,10 @@ class CultivoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cultivo $cultivo): JsonResponse
+    public function update(UpdateCultivoRequest $request, Cultivo $cultivo): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'especie_id' => 'required|exists:especies,id',
-            'bancal_id' => 'required|exists:bancals,id',
-            'nombre' => 'required|string|max:50|unique:cultivos,nombre,' . $cultivo->id,
-            'unidad_medida_id' => 'required|exists:unidad_medidas,id',
-            'activo' => 'required|boolean',
-            'fecha_siembra' => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $cultivo->update($request->only([
-            'especie_id',
-            'bancal_id',
-            'nombre',
-            'unidad_medida_id',
-            'activo',
-            'fecha_siembra',
-        ]));
+        $data = $request->validated();
+        $cultivo->update($data);
         $cultivo->load(['especie', 'bancal', 'unidadMedida']);
         return response()->json($cultivo);
     }

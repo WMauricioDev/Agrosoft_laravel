@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Inventario;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
 use App\Models\Inventario\PrecioProducto;
+use App\Http\Requests\Inventario\StorePrecioProductoRequest;
+use App\Http\Requests\Inventario\UpdatePrecioProductoRequest;
 
 class PrecioProductoController extends Controller
 {
@@ -16,26 +17,23 @@ class PrecioProductoController extends Controller
      */
     public function index(): JsonResponse
     {
-        $preciosProductos = PrecioProducto::with(['cosecha', 'unidadMedida'])->get();
-        Log::info('Fetched all PrecioProducto records', ['count' => $preciosProductos->count()]);
-        return response()->json($preciosProductos);
+        try {
+            $preciosProductos = PrecioProducto::with(['cosecha', 'unidadMedida'])->get();
+            Log::info('Fetched all PrecioProducto records', ['count' => $preciosProductos->count()]);
+            return response()->json($preciosProductos);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch PrecioProducto records', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Error al obtener los registros de PrecioProducto: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StorePrecioProductoRequest $request): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'cosecha_id' => 'nullable|exists:cosechas,id',
-                'unidad_medida_id' => 'nullable|exists:unidad_medidas,id',
-                'precio' => 'required|numeric|min:0',
-                'fecha_registro' => 'required|date',
-                'stock' => 'required|integer|min:0',
-                'fecha_caducidad' => 'nullable|date|after_or_equal:fecha_registro',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated PrecioProducto data', ['data' => $validated]);
 
             $precioProducto = DB::transaction(function () use ($validated) {
@@ -51,7 +49,7 @@ class PrecioProductoController extends Controller
                 'error' => $e->getMessage(),
                 'data' => $request->all(),
             ]);
-            return response()->json(['error' => 'Failed to create PrecioProducto: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al crear PrecioProducto: ' . $e->getMessage()], 500);
         }
     }
 
@@ -60,26 +58,26 @@ class PrecioProductoController extends Controller
      */
     public function show(PrecioProducto $precioProducto): JsonResponse
     {
-        Log::info('Fetched PrecioProducto', ['id' => $precioProducto->id]);
-        $precioProducto->load(['cosecha', 'unidadMedida']);
-        return response()->json($precioProducto);
+        try {
+            Log::info('Fetched PrecioProducto', ['id' => $precioProducto->id]);
+            $precioProducto->load(['cosecha', 'unidadMedida']);
+            return response()->json($precioProducto);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch PrecioProducto', [
+                'id' => $precioProducto->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Error al obtener PrecioProducto: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PrecioProducto $precioProducto): JsonResponse
+    public function update(UpdatePrecioProductoRequest $request, PrecioProducto $precioProducto): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'cosecha_id' => 'nullable|exists:cosechas,id',
-                'unidad_medida_id' => 'nullable|exists:unidad_medidas,id',
-                'precio' => 'required|numeric|min:0',
-                'fecha_registro' => 'required|date',
-                'stock' => 'required|integer|min:0',
-                'fecha_caducidad' => 'nullable|date|after_or_equal:fecha_registro',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated PrecioProducto update data', ['id' => $precioProducto->id, 'data' => $validated]);
 
             $precioProducto->update($validated);
@@ -93,7 +91,7 @@ class PrecioProductoController extends Controller
                 'error' => $e->getMessage(),
                 'data' => $request->all(),
             ]);
-            return response()->json(['error' => 'Failed to update PrecioProducto: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al actualizar PrecioProducto: ' . $e->getMessage()], 500);
         }
     }
 
@@ -112,7 +110,7 @@ class PrecioProductoController extends Controller
                 'id' => $precioProducto->id,
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to delete PrecioProducto: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al eliminar PrecioProducto: ' . $e->getMessage()], 500);
         }
     }
 }

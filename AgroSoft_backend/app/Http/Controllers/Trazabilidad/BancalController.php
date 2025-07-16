@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Trazabilidad;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Trazabilidad\Bancal;
 use App\Http\Requests\Trazabilidad\StoreBancalRequest;
