@@ -9,10 +9,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
-
+use App\Http\Requests\Usuarios\RegisterRequest;  
 class UserController extends Controller
 {
-    
     /**
      * Display a listing of the resource.
      */
@@ -34,14 +33,18 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request)
+public function store(RegisterRequest $request)
 {
-  $data = $request->validate([
-        'nombre'           => 'required|string|max:100',
-        'apellido'         => 'required|string|max:100',
-        'numero_documento' => 'required|numeric|unique:users,numero_documento',
-       
-    ]);
+
+    if (!$request->isMethod('post')) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Método no permitido. Solo se acepta POST',
+        ], 405);
+    }
+
+    $data = $request->validated();
+
     if (empty($data['password'])) {
         $primeraLetra = strtolower(substr($data['nombre'], 0, 1));
         $generatedPassword = $primeraLetra . $data['numero_documento'];
@@ -51,20 +54,20 @@ public function store(Request $request)
     }
 
     $data['password'] = Hash::make($data['password']);
-    $data['email'] = $data['email'] ?? 'sin-email-' . uniqid() . '@example.com'; // email de relleno
-    // Valores por defecto
-    $data['rol_id'] = $data['rol_id'] ?? 1;
-    $data['estado'] = $data['estado'] ?? true;
+    $data['email'] = $data['email'] ?? 'sin-email-' . uniqid() . '@example.com'; 
+    $data['rol_id'] = $data['rol_id'] ?? 1;  
+    $data['estado'] = $data['estado'] ?? true; 
 
     try {
         $user = User::create($data);
 
         return response()->json([
-            'success'  => true,
-            'message'  => 'Usuario creado exitosamente',
-            'data'     => $user,
-            'password' => $generatedPassword,
+            'success' => true,
+            'message' => 'Usuario creado exitosamente',
+            'data'    => $user,
+            'password'=> $generatedPassword,  
         ], Response::HTTP_CREATED);
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -73,26 +76,38 @@ public function store(Request $request)
     }
 }
 
-
     /**
      * Display the specified resource.
      */
-   public function show(User $user): JsonResponse
+public function show($id): JsonResponse
 {
-    $user->load('rol');
+    // Intentamos encontrar al usuario por ID
+    $user = User::with('rol')->find($id);
 
+    // Si el usuario no se encuentra, devolvemos una respuesta 404 personalizada
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuario no encontrado.',
+        ], Response::HTTP_NOT_FOUND);
+    }
+
+    // Si lo encontramos, devolvemos la información del usuario
     return response()->json([
-        'id' => $user->id,
-        'nombre' => $user->nombre,
-        'apellido' => $user->apellido,
-        'email' => $user->email,
-        'numero_documento' => $user->numero_documento,
-        'estado' => $user->estado,
-        'rol' => [
-            'id' => $user->rol->id,
-            'nombre' => $user->rol->nombre,
-        ],
-    ]);
+        'success' => true,
+        'data' => [
+            'id' => $user->id,
+            'nombre' => $user->nombre,
+            'apellido' => $user->apellido,
+            'email' => $user->email,
+            'numero_documento' => $user->numero_documento,
+            'estado' => $user->estado,
+            'rol' => [
+                'id' => $user->rol->id,
+                'nombre' => $user->rol->nombre,
+            ],
+        ]
+    ], Response::HTTP_OK);
 }
 
 
@@ -107,8 +122,17 @@ public function store(Request $request)
     /**
      * Update the specified resource in storage.
      */
-public function update(Request $request, User $user)
+public function update(Request $request, $id)
 {
+    $user = User::find($id);    
+
+     if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuario no encontrado.',
+        ], Response::HTTP_NOT_FOUND);
+    }
+    
     // Evitar que el usuario con ID 1 sea editado
     if ($user->id === 1) {
         return response()->json([
@@ -116,6 +140,14 @@ public function update(Request $request, User $user)
             'message' => 'El usuario principal no puede ser editado',
         ], \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
     }
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuario no encontrado.',
+        ], \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
+    }
+    
 
     $user->update($request->only(['nombre', 'apellido', 'estado', 'rol_id', 'email']));
 
@@ -125,15 +157,21 @@ public function update(Request $request, User $user)
         'user'    => $user
     ]);
 }
-
-
     /**
      * Remove the specified resource from storage.
      */
 
-public function destroy(User $user)
+public function destroy($id)
 {
-    if ($user->rol_id == 1) {
+       $user = User::find($id);
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuario no encontrado.',
+        ], Response::HTTP_NOT_FOUND);
+    }
+    if ($user->rol_id == 4) {
         return response()->json([
             'success' => false,
             'message' => 'No se puede eliminar un usuario con rol de administrador',

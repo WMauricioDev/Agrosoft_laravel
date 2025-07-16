@@ -12,6 +12,7 @@ use App\Models\Finanzas\Salario;
 use App\Models\Usuarios\Roles;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUserAuth;
+use App\Http\Requests\Finanzas\SalarioRequest;
 
 class SalarioController extends Controller
 {
@@ -36,7 +37,7 @@ class SalarioController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(SalarioRequest $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'rol_id' => 'required|exists:roles,id',
