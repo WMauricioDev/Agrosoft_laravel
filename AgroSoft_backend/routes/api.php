@@ -35,6 +35,8 @@ use App\Http\Controllers\Trazabilidad\PrestamoInsumoController;
 use App\Http\Controllers\Trazabilidad\PrestamoHerramientaController;
 use App\Http\Controllers\Finanzas\PagoController;
 use App\Http\Controllers\Finanzas\VentaController;
+use App\Http\Controllers\Usuarios\CambiarPasswordController;
+
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
 
@@ -57,9 +59,14 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('user/{user}', [UserController::class, 'show'])->name('users.show');    
     // Traer todos los usuarios
     Route::get('user', [UserController::class, 'index'])->name('users.index');
+Route::middleware('auth:api')->put('/user/password', [CambiarPasswordController::class, 'cambiarPassword']);
+
+    require __DIR__.'/fallback/userFallback.php';
+
     // Traer los roles
     Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
     Route::patch('/user/{user}', [UserController::class, 'update']);
+    Route::delete('user/{user}',[UserController::class, 'destroy']);
     Route::post('/user/secondRegister', [UserController::class, 'store']);
     Route::post('/user/masivRegister', [ImportUsuarioController::class, 'importar']);
 

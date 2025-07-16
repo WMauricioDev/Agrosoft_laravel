@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Usuarios;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Usuarios\LoginRequest;
+use App\Http\Requests\Usuarios\RegisterRequest;
 use App\Models\Usuarios\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;

@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Requests\RegisterRequest;  
+use App\Http\Requests\Usuarios\RegisterRequest;  
 class UserController extends Controller
 {
     /**
@@ -122,10 +122,16 @@ public function show($id): JsonResponse
     /**
      * Update the specified resource in storage.
      */
-public function update(Request $request, User $user)
+public function update(Request $request, $id)
 {
+    $user = User::find($id);    
 
-    
+     if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuario no encontrado.',
+        ], Response::HTTP_NOT_FOUND);
+    }
     
     // Evitar que el usuario con ID 1 sea editado
     if ($user->id === 1) {
@@ -155,9 +161,17 @@ public function update(Request $request, User $user)
      * Remove the specified resource from storage.
      */
 
-public function destroy(User $user)
+public function destroy($id)
 {
-    if ($user->rol_id == 1) {
+       $user = User::find($id);
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuario no encontrado.',
+        ], Response::HTTP_NOT_FOUND);
+    }
+    if ($user->rol_id == 4) {
         return response()->json([
             'success' => false,
             'message' => 'No se puede eliminar un usuario con rol de administrador',
