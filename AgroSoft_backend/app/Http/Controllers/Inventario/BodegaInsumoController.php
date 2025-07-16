@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Inventario;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Inventario\BodegaInsumo;
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventario\StoreBodegaInsumoRequest;
+use App\Http\Requests\Inventario\UpdateBodegaInsumoRequest;
 
 class BodegaInsumoController extends Controller
 {
@@ -16,23 +17,23 @@ class BodegaInsumoController extends Controller
      */
     public function index(): JsonResponse
     {
-        $bodegaInsumos = BodegaInsumo::with(['bodega', 'insumo'])->get();
-        Log::info('Fetched all BodegaInsumo records', ['count' => $bodegaInsumos->count()]);
-        return response()->json($bodegaInsumos);
+        try {
+            $bodegaInsumos = BodegaInsumo::with(['bodega', 'insumo'])->get();
+            Log::info('Fetched all BodegaInsumo records', ['count' => $bodegaInsumos->count()]);
+            return response()->json($bodegaInsumos);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch BodegaInsumo records', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Error al obtener los registros de BodegaInsumo: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreBodegaInsumoRequest $request): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'bodega_id' => 'required|exists:bodegas,id',
-                'insumo_id' => 'required|exists:insumos,id',
-                'cantidad' => 'required|integer|min:1',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated BodegaInsumo data', ['data' => $validated]);
 
             $bodegaInsumo = DB::transaction(function () use ($validated) {
@@ -48,7 +49,7 @@ class BodegaInsumoController extends Controller
                 'error' => $e->getMessage(),
                 'data' => $request->all(),
             ]);
-            return response()->json(['error' => 'Failed to create BodegaInsumo: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al crear BodegaInsumo: ' . $e->getMessage()], 500);
         }
     }
 
@@ -57,23 +58,26 @@ class BodegaInsumoController extends Controller
      */
     public function show(BodegaInsumo $bodegaInsumo): JsonResponse
     {
-        Log::info('Fetched BodegaInsumo', ['id' => $bodegaInsumo->id]);
-        $bodegaInsumo->load(['bodega', 'insumo']);
-        return response()->json($bodegaInsumo);
+        try {
+            Log::info('Fetched BodegaInsumo', ['id' => $bodegaInsumo->id]);
+            $bodegaInsumo->load(['bodega', 'insumo']);
+            return response()->json($bodegaInsumo);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch BodegaInsumo', [
+                'id' => $bodegaInsumo->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Error al obtener BodegaInsumo: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, BodegaInsumo $bodegaInsumo): JsonResponse
+    public function update(UpdateBodegaInsumoRequest $request, BodegaInsumo $bodegaInsumo): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'bodega_id' => 'required|exists:bodegas,id',
-                'insumo_id' => 'required|exists:insumos,id',
-                'cantidad' => 'required|integer|min:1',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated BodegaInsumo update data', ['id' => $bodegaInsumo->id, 'data' => $validated]);
 
             $bodegaInsumo->update($validated);
@@ -87,7 +91,7 @@ class BodegaInsumoController extends Controller
                 'error' => $e->getMessage(),
                 'data' => $request->all(),
             ]);
-            return response()->json(['error' => 'Failed to update BodegaInsumo: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al actualizar BodegaInsumo: ' . $e->getMessage()], 500);
         }
     }
 
@@ -106,7 +110,7 @@ class BodegaInsumoController extends Controller
                 'id' => $bodegaInsumo->id,
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to delete BodegaInsumo: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al eliminar BodegaInsumo: ' . $e->getMessage()], 500);
         }
     }
 }

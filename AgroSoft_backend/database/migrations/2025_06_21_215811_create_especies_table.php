@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('nombre', 30)->unique();
             $table->text('descripcion');
             $table->integer('largo_crecimiento');
-            $table->string('img')->nullable();
             $table->timestamps();
         });
     }

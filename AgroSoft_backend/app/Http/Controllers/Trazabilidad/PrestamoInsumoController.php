@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Trazabilidad;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Trazabilidad\PrestamoInsumo;
+use App\Http\Requests\Trazabilidad\StorePrestamoInsumoRequest;
+use App\Http\Requests\Trazabilidad\UpdatePrestamoInsumoRequest;
 
 class PrestamoInsumoController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(): JsonResponse
     {
         $prestamos = PrestamoInsumo::with(['actividad', 'insumo', 'unidadMedida'])->get();
@@ -18,18 +22,13 @@ class PrestamoInsumoController extends Controller
         return response()->json($prestamos);
     }
 
-    public function store(Request $request): JsonResponse
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StorePrestamoInsumoRequest $request): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'actividad_id' => 'required|exists:actividades,id',
-                'insumo_id' => 'required|exists:insumos,id',
-                'cantidad_usada' => 'required|integer|min:0',
-                'cantidad_devuelta' => 'required|integer|min:0',
-                'fecha_devolucion' => 'nullable|date',
-                'unidad_medida_id' => 'nullable|exists:unidad_medidas,id',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated PrestamoInsumo data', ['data' => $validated]);
 
             $prestamo = DB::transaction(function () use ($validated) {
@@ -40,11 +39,14 @@ class PrestamoInsumoController extends Controller
             Log::info('Created PrestamoInsumo', ['id' => $prestamo->id]);
             return response()->json($prestamo, 201);
         } catch (\Exception $e) {
-            Log::error('Failed to create PrestamoInsumo', ['error' => $e->getMessage(), 'data' => $request->all()]);
+            Log::error('Failed to create PrestamoInsumo', ['error' => $e->getMessage(), 'data' => $validated]);
             return response()->json(['error' => 'Failed to create PrestamoInsumo: ' . $e->getMessage()], 500);
         }
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(PrestamoInsumo $prestamoInsumo): JsonResponse
     {
         Log::info('Fetched PrestamoInsumo', ['id' => $prestamoInsumo->id]);
@@ -52,18 +54,13 @@ class PrestamoInsumoController extends Controller
         return response()->json($prestamoInsumo);
     }
 
-    public function update(Request $request, PrestamoInsumo $prestamoInsumo): JsonResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdatePrestamoInsumoRequest $request, PrestamoInsumo $prestamoInsumo): JsonResponse
     {
         try {
-            $validated = $request->validate([
-                'actividad_id' => 'required|exists:actividades,id',
-                'insumo_id' => 'required|exists:insumos,id',
-                'cantidad_usada' => 'required|integer|min:0',
-                'cantidad_devuelta' => 'required|integer|min:0',
-                'fecha_devolucion' => 'nullable|date',
-                'unidad_medida_id' => 'nullable|exists:unidad_medidas,id',
-            ]);
-
+            $validated = $request->validated();
             Log::info('Validated PrestamoInsumo update data', ['id' => $prestamoInsumo->id, 'data' => $validated]);
 
             $prestamoInsumo->update($validated);
@@ -71,11 +68,14 @@ class PrestamoInsumoController extends Controller
             Log::info('Updated PrestamoInsumo', ['id' => $prestamoInsumo->id]);
             return response()->json($prestamoInsumo);
         } catch (\Exception $e) {
-            Log::error('Failed to update PrestamoInsumo', ['id' => $prestamoInsumo->id, 'error' => $e->getMessage(), 'data' => $request->all()]);
+            Log::error('Failed to update PrestamoInsumo', ['id' => $prestamoInsumo->id, 'error' => $e->getMessage(), 'data' => $validated]);
             return response()->json(['error' => 'Failed to update PrestamoInsumo: ' . $e->getMessage()], 500);
         }
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(PrestamoInsumo $prestamoInsumo): JsonResponse
     {
         try {

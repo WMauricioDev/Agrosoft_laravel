@@ -5,17 +5,16 @@ namespace App\Http\Controllers\Trazabilidad;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Trazabilidad\Cosecha;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
+use App\Http\Requests\Trazabilidad\StoreCosechaRequest;
+use App\Http\Requests\Trazabilidad\UpdateCosechaRequest;
 
 class CosechaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+  
     public function reportePdf(Request $request): Response
     {
         $fechaInicio = $request->query('fecha_inicio');
@@ -40,10 +39,9 @@ class CosechaController extends Controller
         $cantidadTotal = $cosechas->sum('cantidad');
         $promedioCosecha = $totalCosechas > 0 ? $cantidadTotal / $totalCosechas : 0;
 
-        
-                $html = '
+        $html = '
             <h1>Reporte de Cosechas</h1>
-            <p>Fecha desde: ' . $fechaInicio->format('Y-m-d') . '</p>
+            <p> Terrestrial: Fecha desde: ' . $fechaInicio->format('Y-m-d') . '</p>
             <p>Fecha hasta: ' . $fechaFin->format('Y-m-d') . '</p>
             <p>Total de cosechas: ' . $totalCosechas . '</p>
             <p>Cantidad total: ' . $cantidadTotal . '</p>
@@ -76,6 +74,10 @@ class CosechaController extends Controller
         $pdf = Pdf::loadHTML($html);
         return $pdf->download('reporte_cosechas.pdf');
     }
+
+    /**
+     * Display a listing of the resource.
+     */
     public function index(): JsonResponse
     {
         $cosechas = Cosecha::with(['cultivo', 'unidadMedida'])->get();
@@ -85,25 +87,10 @@ class CosechaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreCosechaRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'cultivo_id' => 'required|exists:cultivos,id',
-            'cantidad' => 'required|integer|min:0',
-            'unidad_medida_id' => 'required|exists:unidad_medidas,id',
-            'fecha' => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $cosecha = Cosecha::create($request->only([
-            'cultivo_id',
-            'cantidad',
-            'unidad_medida_id',
-            'fecha',
-        ]));
+        $data = $request->validated();
+        $cosecha = Cosecha::create($data);
         $cosecha->load(['cultivo', 'unidadMedida']);
         return response()->json($cosecha, 201);
     }
@@ -120,25 +107,10 @@ class CosechaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cosecha $cosecha): JsonResponse
+    public function update(UpdateCosechaRequest $request, Cosecha $cosecha): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'cultivo_id' => 'required|exists:cultivos,id',
-            'cantidad' => 'required|integer|min:0',
-            'unidad_medida_id' => 'required|exists:unidad_medidas,id',
-            'fecha' => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $cosecha->update($request->only([
-            'cultivo_id',
-            'cantidad',
-            'unidad_medida_id',
-            'fecha',
-        ]));
+        $data = $request->validated();
+        $cosecha->update($data);
         $cosecha->load(['cultivo', 'unidadMedida']);
         return response()->json($cosecha);
     }
