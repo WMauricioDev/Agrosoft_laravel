@@ -16,7 +16,11 @@ class UnidadMedidaController extends Controller
     public function index(): JsonResponse
     {
         $unidades = UnidadMedida::all();
-        return response()->json($unidades);
+        return response()->json([
+            'success' => true,
+            'message' => 'Unidades de medidas obtenidas correctamente.',
+            'data' => $unidades,
+        ], 201);   
     }
 
     /**

@@ -16,7 +16,11 @@ class CultivoController extends Controller
     public function index(): JsonResponse
     {
         $cultivos = Cultivo::with(['especie', 'bancal', 'unidadMedida'])->get();
-        return response()->json($cultivos);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cultivo obtenido correctamente.',
+            'data' => $cultivos,
+        ], 201);
     }
 
     /**
@@ -27,7 +31,11 @@ class CultivoController extends Controller
         $data = $request->validated();
         $cultivo = Cultivo::create($data);
         $cultivo->load(['especie', 'bancal', 'unidadMedida']);
-        return response()->json($cultivo, 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cultivo creado correctamente.',
+            'data' => $cultivo,
+        ], 201);
     }
 
     /**
@@ -47,7 +55,11 @@ class CultivoController extends Controller
         $data = $request->validated();
         $cultivo->update($data);
         $cultivo->load(['especie', 'bancal', 'unidadMedida']);
-        return response()->json($cultivo);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cultivo actualizado correctamente.',
+            'data' => $cultivo,
+        ], 201);
     }
 
     /**
@@ -56,6 +68,9 @@ class CultivoController extends Controller
     public function destroy(Cultivo $cultivo): JsonResponse
     {
         $cultivo->delete();
-        return response()->json(null, 204);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cultivo eliminado correctamente.',
+        ], 201);
     }
 }

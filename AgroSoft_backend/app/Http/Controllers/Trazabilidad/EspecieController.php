@@ -16,7 +16,11 @@ class EspecieController extends Controller
     public function index(): JsonResponse
     {
         $especies = Especie::with('tipoEspecie')->get();
-        return response()->json($especies);
+        return response()->json([
+            'success' => true,
+            'message' => 'Especies obtenidas correctamente.',
+            'data' => $especies,
+        ], 201);   
     }
 
     /**
@@ -27,7 +31,11 @@ class EspecieController extends Controller
         $data = $request->validated();
         $especie = Especie::create($data);
         $especie->load('tipoEspecie');
-        return response()->json($especie, 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Especie creada correctamente.',
+            'data' => $especie,
+        ], 201);   
     }
 
     /**
@@ -47,7 +55,11 @@ class EspecieController extends Controller
         $data = $request->validated();
         $especie->update($data);
         $especie->load('tipoEspecie');
-        return response()->json($especie);
+        return response()->json([
+            'success' => true,
+            'message' => 'Especie actualizado correctamente.',
+            'data' => $especie,
+        ], 201);   
     }
 
     /**
@@ -56,6 +68,9 @@ class EspecieController extends Controller
     public function destroy(Especie $especie): JsonResponse
     {
         $especie->delete();
-        return response()->json(null, 204);
+        return response()->json([
+            'success' => true,
+            'message' => 'Especie eliminada correctamente.',
+        ], 201);   
     }
 }

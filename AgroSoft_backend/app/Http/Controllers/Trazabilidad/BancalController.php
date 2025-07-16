@@ -16,8 +16,11 @@ class BancalController extends Controller
     public function index(): JsonResponse
     {
         $bancals = Bancal::with('lote')->get();
-        return response()->json($bancals);
-    }
+        return response()->json([
+            'success' => true,
+            'message' => 'Bancal obtenida correctamente.',
+            'data' => $bancals,
+        ], 201);    }
 
     /**
      * Store a newly created resource in storage.
@@ -25,7 +28,11 @@ class BancalController extends Controller
     public function store(StoreBancalRequest $request): JsonResponse
     {
         $bancal = Bancal::create($request->validated());
-        return response()->json($bancal, 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Bancal creado correctamente.',
+            'data' => $bancal,
+        ], 201);    
     }
 
 
@@ -52,7 +59,11 @@ class BancalController extends Controller
             'lote_id',
         ]));
         $bancal->load('lote');
-        return response()->json($bancal);
+        return response()->json([
+            'success' => true,
+            'message' => 'Bancal creado correctamente.',
+            'data' => $bancal,
+        ], 201);    
     }
 
     /**
@@ -61,6 +72,9 @@ class BancalController extends Controller
     public function destroy(Bancal $bancal): JsonResponse
     {
         $bancal->delete();
-        return response()->json(null, 204);
-    }
+        return response()->json([
+            'success' => true,
+            'message' => 'Bancal eliminada correctamente.',
+            'data' => $bancal,
+        ], 201);    }
 }
