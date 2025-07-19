@@ -50,6 +50,7 @@ const UsuariosPage: React.FC = () => {
     setUsuariosLocal(usuariosAPI);
   }, [usuariosAPI]);
 
+
   if (!user || user.rol?.nombre.toLowerCase() !== "administrador") {
     return <Navigate to="/perfil" replace />;
     
