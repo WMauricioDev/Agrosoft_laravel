@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Requests\Usuarios\RegisterRequest;  
+use App\Http\Requests\Usuarios\SecondRegisterRequest;  
 class UserController extends Controller
 {
     /**
@@ -33,7 +33,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-public function store(RegisterRequest $request)
+public function store(SecondRegisterRequest $request)
 {
 
     if (!$request->isMethod('post')) {
