@@ -214,7 +214,7 @@ const PerfilPage: React.FC = () => {
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
               <TextField
                 label="Rol"
-                value={editUser.rol || "Sin rol"}
+                value={editUser.rol?.nombre || "Sin rol"}
                 disabled
                 fullWidth
                 sx={textFieldStyles}

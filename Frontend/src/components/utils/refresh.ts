@@ -1,4 +1,6 @@
 import api from "@/components/utils/axios"; 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}/api/`;
 
 export const obtenerNuevoToken = async (refreshToken: string | null) => {
   if (!refreshToken) {
@@ -6,7 +8,7 @@ export const obtenerNuevoToken = async (refreshToken: string | null) => {
   }
 
   try {
-    const response = await api.post("/auth/token/refresh/", {
+    const response = await api.post("/refresh/", {
       refresh: refreshToken,
     });
 

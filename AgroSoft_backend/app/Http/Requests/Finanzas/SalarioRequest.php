@@ -18,7 +18,7 @@ class SalarioRequest extends FormRequest
         return [
             'rol_id' => ['required', 'integer', 'exists:roles,id'],
             'fecha_de_implementacion' => ['required', 'date'],
-            'valor_jornal' => ['required', 'regex:/^\d{1,3}(?:\.\d{3})*(?:,\d{2})?$/'], // formato 40.000
+            'valor_jornal' => ['required', 'numeric', 'min:0'],
         ];
     }
 

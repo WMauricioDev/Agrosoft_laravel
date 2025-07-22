@@ -20,31 +20,35 @@ const SalarioPage: React.FC = () => {
   const navigate = useNavigate();
 
   const formatColombianNumber = (value: string): string => {
-    const numStr = value.replace(/[^\d]/g, '');
-    return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  };
+  const rawNumber = value.replace(/[^\d]/g, '');
+  if (!rawNumber) return '';
+  return rawNumber.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
 
   const parseColombianNumber = (value: string): number => {
     return parseFloat(value.replace(/\./g, '')) || 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === "valor_jornal") {
-      const formattedValue = formatColombianNumber(value);
-      setDisplayValue(formattedValue);
-      setSalario(prev => ({
-        ...prev,
-        valor_jornal: parseColombianNumber(formattedValue)
-      }));
-    } else {
-      setSalario(prev => ({
-        ...prev,
-        [name]: name === "rol_id" ? parseInt(value) : value
-      }));
-    }
-  };
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const { name, value } = e.target;
+
+  if (name === "valor_jornal") {
+    const formattedValue = formatColombianNumber(value); // "40.000"
+    setDisplayValue(formattedValue);
+    setSalario(prev => ({
+      ...prev,
+      valor_jornal: formattedValue // ← ENVÍA "40.000" COMO STRING
+    }));
+  } else {
+    setSalario(prev => ({
+      ...prev,
+      [name]: name === "rol_id" ? parseInt(value) : value
+    }));
+  }
+};
+
+
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
