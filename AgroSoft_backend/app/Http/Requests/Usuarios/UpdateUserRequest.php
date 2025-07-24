@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 
 
 
-class RegisterRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -43,35 +43,27 @@ protected function failedValidation(Validator $validator)
 
         return [
             'nombre'                  => [
-                'required',
                 'string',
                 'max:255',
                 'alpha_space',
             ],
             'apellido'                  => [
-                'required',
                 'string',
                 'max:255',
                 'alpha_space',
             ],
             'email'                 => [
-                'required',
                 'string',
                 'email',
                 'max:255',
                  Rule::unique('users', 'email')->ignore($this->route('user')), 
-            ],
+        ],
             'numero_documento'                 => [
-                'required',
                 'numeric',
                 'digits_between:6,20', 
-                'unique:users,numero_documento',
+                 Rule::unique('users', 'numero_documento')->ignore($this->route('user')), 
             ],
-            'password'      =>      [
-                'string',
-                'nullable',
-
-            ],
+        
                 'estado' => [
                 'boolean',
             ],

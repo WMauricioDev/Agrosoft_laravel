@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Usuarios\SecondRegisterRequest;  
+use App\Http\Requests\Usuarios\UpdateUserRequest;
 class UserController extends Controller
 {
     /**
@@ -122,7 +123,7 @@ public function show($id): JsonResponse
     /**
      * Update the specified resource in storage.
      */
-public function update(Request $request, $id)
+public function update(UpdateUserRequest $request, $id)
 {
     $user = User::find($id);    
 
@@ -150,13 +151,23 @@ public function update(Request $request, $id)
     
 
     $user->update($request->only(['nombre', 'apellido', 'estado', 'rol_id', 'email']));
+    $user->load('rol');
 
     return response()->json([
-        'success' => true,
-        'message' => 'Usuario actualizado',
-        'user'    => $user
-    ]);
+        'id' => $user->id,
+        'nombre' => $user->nombre,
+        'apellido' => $user->apellido,
+        'email' => $user->email,
+        'numero_documento' => $user->numero_documento,
+        'estado' => $user->estado,
+        'rol' => [
+            'id' => $user->rol->id,
+            'nombre' => $user->rol->nombre,
+        ],
+    ], Response::HTTP_OK);
+
 }
+
     /**
      * Remove the specified resource from storage.
      */

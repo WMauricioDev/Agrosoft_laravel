@@ -64,7 +64,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::get('user/{user}', [UserController::class, 'show'])->name('users.show');
     // Traer todos los usuarios
     Route::get('user', [UserController::class, 'index'])->name('users.index');
-Route::middleware('auth:api')->put('/user/password', [CambiarPasswordController::class, 'cambiarPassword']);
+Route::middleware('auth:api')->post('/user/password', [CambiarPasswordController::class, 'cambiarPassword']);
 
     require __DIR__.'/fallback/Usuarios/userFallback.php';
 

@@ -5,8 +5,8 @@ import DefaultLayout from "@/layouts/default";
 import { Box, Button, TextField, Typography, Modal, Backdrop, Fade, IconButton, InputAdornment } from "@mui/material";
 import { motion } from "framer-motion";
 import api from "@/components/utils/axios"; 
-import { toast } from "react-hot-toast";
 import { addToast } from "@heroui/toast";
+import { limpiarSoloLetrasYEspacios } from "@/hooks/usuarios/RestriccionCampos";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -26,6 +26,7 @@ const PerfilPage: React.FC = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
 
   if (!user || !editUser) {
     return (
@@ -36,6 +37,7 @@ const PerfilPage: React.FC = () => {
       </DefaultLayout>
     );
   }
+
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -78,7 +80,7 @@ const PerfilPage: React.FC = () => {
       setEditError(null);
     } catch (err: any) {
       console.error("Error del backend:", err.response?.data);
-      setEditError(err.response?.data?.detail || "No se pudo actualizar los datos. Verifica la información.");
+      setEditError(err.response?.data?.detail || "El correo ingresado no es válido o ya esta en uso por otro usuario");
     }
   };
 
@@ -91,8 +93,12 @@ const PerfilPage: React.FC = () => {
   try {
     const token = localStorage.getItem("access_token");
     await api.post(
-      `${API_URL}/usuarios/change_password/`,
-      { current_password: currentPassword, new_password: newPassword },
+      `${API_URL}/api/user/password`,
+      {
+    actual_password: currentPassword,
+    nueva_password: newPassword,
+    nueva_password_confirmation: confirmNewPassword, 
+  },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,18 +107,22 @@ const PerfilPage: React.FC = () => {
       }
     );
 
+
+    
+
     setPasswordError(null);
     setCurrentPassword("");
     setNewPassword("");
     setConfirmNewPassword("");
     setOpenModal(false);
 
-    addToast({
-      title: "Éxito",
-      description: "Contraseña actualizada con éxito.",
-      type: "success",
-      color:"success"
-    });
+      addToast({
+        title: "Éxito",
+        description: "Contraseña actualizada con éxito.",
+        type: "success",
+        color:"success"
+      });
+      
 
   } catch (err: any) {
     setPasswordError(
@@ -147,6 +157,7 @@ const PerfilPage: React.FC = () => {
       '&.Mui-disabled': { color: '#718096' },
     },
   };
+  
 
   return (
     <DefaultLayout>
@@ -156,7 +167,7 @@ const PerfilPage: React.FC = () => {
         </Typography>
         {!isEditing ? (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <TextField label="Nombre" value={user.nombre} disabled fullWidth sx={textFieldStyles} />
+            <TextField label="Nombre" value={user.nombre} disabled fullWidth sx={textFieldStyles }      />
             <TextField label="Apellido" value={user.apellido} disabled fullWidth sx={textFieldStyles} />
             <TextField label="Email" value={user.email} disabled fullWidth sx={textFieldStyles} />
             <TextField label="Rol" value={user.rol?.nombre || "Sin rol"} disabled fullWidth sx={textFieldStyles} />
@@ -176,21 +187,34 @@ const PerfilPage: React.FC = () => {
             )}
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-                <TextField
-                  label="Nombre"
-                  value={editUser.nombre}
-                  onChange={(e) => handleChange("nombre", e.target.value)}
-                  fullWidth
+                
+                                  <TextField
+                label="Nombre"
+                value={editUser.nombre}
+                onChange={(e) => {
+                  const textoLimpio = limpiarSoloLetrasYEspacios(e.target.value);
+                  setEditUser((prev) => ({
+                    ...prev,
+                    nombre: textoLimpio,
+
+                  }));
+                }}
                   required
                   sx={textFieldStyles}
-                />
+              />
               </motion.div>
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
                 <TextField
                   label="Apellido"
                   value={editUser.apellido}
-                  onChange={(e) => handleChange("apellido", e.target.value)}
-                  fullWidth
+                    onChange={(e) => {
+                  const textoLimpio = limpiarSoloLetrasYEspacios(e.target.value);
+                  setEditUser((prev) => ({
+                    ...prev,
+                    apellido: textoLimpio,
+
+                  }));
+                }}
                   required
                   sx={textFieldStyles}
                 />
