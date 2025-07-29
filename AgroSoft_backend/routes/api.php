@@ -40,7 +40,7 @@ use App\Http\Controllers\IoT\SensorController;
 use App\Http\Controllers\IoT\DatoMeteorologicoController;
 use App\Http\Controllers\IoT\DatoHistoricoController;
 use App\Http\Controllers\Usuarios\CambiarPasswordController;
-
+use App\Http\Controllers\Reportes\Usuarios\ReporteUsuariosController;
 
 
 // ── RUTAS PÚBLICAS ────────────────────────────────────────────────────────────
@@ -392,6 +392,10 @@ Route::middleware('auth:api')->post('/user/password', [CambiarPasswordController
     Route::resource('sensors', SensorController::class);
     Route::resource('dato_meteorologicos', DatoMeteorologicoController::class);
     Route::resource('dato_historicos', DatoHistoricoController::class);
+
+    //Repoortes
+    Route::middleware('auth:api')->get('/usuarios/usuarios', [ReporteUsuariosController::class, 'generar']);
+
 
     // ── Subgrupo: sólo administradores pueden modificar insumos y tipos de actividad ────────────
     Route::middleware(IsAdmin::class)->group(function () {

@@ -713,6 +713,8 @@ class ComposerStaticInit88970a0117c062eed55fa8728fc43833
         'App\\Http\\Requests\\Usuarios\\CambiarPasswordRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Usuarios/CambiarPasswordRequest.php',
         'App\\Http\\Requests\\Usuarios\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Usuarios/LoginRequest.php',
         'App\\Http\\Requests\\Usuarios\\RegisterRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Usuarios/RegisterRequest.php',
+        'App\\Http\\Requests\\Usuarios\\SecondRegisterRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Usuarios/SecondRegisterRequest.php',
+        'App\\Http\\Requests\\Usuarios\\UpdateUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Usuarios/UpdateUserRequest.php',
         'App\\Imports\\UsuariosImport' => __DIR__ . '/../..' . '/app/Imports/UsuariosImport.php',
         'App\\Models\\Finanzas\\DetalleVenta' => __DIR__ . '/../..' . '/app/Models/Finanzas/DetalleVenta.php',
         'App\\Models\\Finanzas\\Pago' => __DIR__ . '/../..' . '/app/Models/Finanzas/Pago.php',

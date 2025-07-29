@@ -32,7 +32,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setAuthenticated] = useState<boolean>(!!localStorage.getItem("accesso_token"));localStorage.removeItem("access_token");localStorage.removeItem("refresh_token");
+const [isAuthenticated, setAuthenticated] = useState<boolean>(!!localStorage.getItem("accesso_token"));
 
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
@@ -54,6 +54,7 @@ const login = async (numeroDocumento: number, password: string) => {
     }
 
     const data = await response.json();
+    console.log("🔴Respuesta del login:", data);
     const token = data.access_token;
 
     if (!token) {
@@ -61,6 +62,7 @@ const login = async (numeroDocumento: number, password: string) => {
     }
 
     localStorage.setItem("accesso_token", token);
+    localStorage.setItem("refresh_token",token);
     setAuthenticated(true);
 
     const userResponse = await fetch(`${API_URL}/api/user/me/`, {
@@ -106,6 +108,41 @@ const login = async (numeroDocumento: number, password: string) => {
     navigate("/login");
   };
 
+  const refreshToken = async () => {
+  const token = localStorage.getItem("refresh_token");
+
+  if (!token) {
+    console.warn("No hay refresh_token");
+    logout();
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/api/refresh`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data?.data?.access_token) {
+      throw new Error("No se pudo refrescar el token");
+    }
+
+    const newToken = data.data.access_token;
+    localStorage.setItem("accesso_token", newToken);
+    console.log("Nuevo access_token guardado correctamente");
+    return newToken;
+  } catch (error) {
+    console.error("Error al refrescar token:", error);
+    logout();
+  }
+};
+
+
   const updateUser = (updatedUser: User) => {
     setUser(updatedUser);
     localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -117,6 +154,8 @@ const login = async (numeroDocumento: number, password: string) => {
     </AuthContext.Provider>
   );
 };
+
+
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);

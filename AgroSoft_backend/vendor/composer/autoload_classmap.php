@@ -104,6 +104,8 @@ return array(
     'App\\Http\\Requests\\Usuarios\\CambiarPasswordRequest' => $baseDir . '/app/Http/Requests/Usuarios/CambiarPasswordRequest.php',
     'App\\Http\\Requests\\Usuarios\\LoginRequest' => $baseDir . '/app/Http/Requests/Usuarios/LoginRequest.php',
     'App\\Http\\Requests\\Usuarios\\RegisterRequest' => $baseDir . '/app/Http/Requests/Usuarios/RegisterRequest.php',
+    'App\\Http\\Requests\\Usuarios\\SecondRegisterRequest' => $baseDir . '/app/Http/Requests/Usuarios/SecondRegisterRequest.php',
+    'App\\Http\\Requests\\Usuarios\\UpdateUserRequest' => $baseDir . '/app/Http/Requests/Usuarios/UpdateUserRequest.php',
     'App\\Imports\\UsuariosImport' => $baseDir . '/app/Imports/UsuariosImport.php',
     'App\\Models\\Finanzas\\DetalleVenta' => $baseDir . '/app/Models/Finanzas/DetalleVenta.php',
     'App\\Models\\Finanzas\\Pago' => $baseDir . '/app/Models/Finanzas/Pago.php',

@@ -182,6 +182,8 @@ public function login(LoginRequest $request): JsonResponse
                 'success' => false,
                 'message' => 'No se pudo refrescar el token.',
             ], Response::HTTP_UNAUTHORIZED);
+
+            
         } catch (\Exception $e) {
             Log::error('Error interno refrescando el token: ' . $e->getMessage());
 
