@@ -1,24 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
-import { addToast } from "@heroui/toast";
+import { addToast } from "@heroui/react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/iot/sensores/`;
+const API_URL = `${BASE_URL}/api/sensors`;
 
 const toggleSensor = async ({ sensorId, activo }: { sensorId: number; activo: boolean }) => {
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    throw new Error("No se encontró el token de autenticación.");
-  }
-
+  console.log("[useToggleSensor] Enviando PATCH a /api/sensors" + sensorId + "/");
   try {
-    const response = await api.patch(
-      `${API_URL}${sensorId}/`,
-      { estado: activo ? "activo" : "inactivo" },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const response = await api.patch(`${API_URL}${sensorId}/`, {
+      estado: activo ? "activo" : "inactivo",
+    });
+    console.log("[useToggleSensor] Respuesta de PATCH /api/sensors" + sensorId + "/: ", response.data);
     return response.data;
   } catch (error: any) {
     console.error("[useToggleSensor] Error al cambiar el estado del sensor:", {
@@ -36,6 +29,7 @@ export const useToggleSensor = () => {
   return useMutation({
     mutationFn: toggleSensor,
     onSuccess: () => {
+      console.log("[useToggleSensor] Estado del sensor actualizado con éxito");
       queryClient.invalidateQueries({ queryKey: ["sensores"] });
       addToast({
         title: "Éxito",
@@ -45,6 +39,7 @@ export const useToggleSensor = () => {
       });
     },
     onError: (error: any) => {
+      console.error("[useToggleSensor] Error al cambiar estado del sensor: ", error);
       addToast({
         title: "Error",
         description: error.message || "Error al cambiar el estado del sensor",

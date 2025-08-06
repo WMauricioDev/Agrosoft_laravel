@@ -2,74 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/datos_sensores/useDatosMeteorologicosHistoricos";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import { addToast } from "@heroui/react";
-import api from "@/components/utils/axios";
 import { EvapotranspiracionData, SensorData } from "@/types/iot/type";
 import { Cultivo } from "@/types/cultivo/Cultivo";
-import { obtenerNuevoToken } from "@/components/utils/refresh";
-
-const fetchBancales = async (): Promise<{ id: number; posY: number | null }[]> => {
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    addToast({ 
-      title: "Sesión expirada",
-      description: "No se encontró el token de autenticación, por favor inicia sesión nuevamente.",
-      timeout: 3000,
-      color: "danger",
-    });
-    throw new Error("No se encontró el token de autenticación.");
-  }
-
-  try {
-    const response = await api.get("http://127.0.0.1:8000/cultivo/Bancal/", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      const refreshToken = localStorage.getItem("refresh_token");
-      if (!refreshToken) {
-        addToast({
-          title: "Sesión expirada",
-          description: "No se encontró el refresh token, por favor inicia sesión nuevamente.",
-          timeout: 3000,
-          color: "danger",
-        });
-        throw new Error("No se encontró el refresh token.");
-      }
-      try {
-        const newToken = await obtenerNuevoToken(refreshToken);
-        localStorage.setItem("access_token", newToken);
-        const response = await api.get("http://127.0.0.1:8000/cultivo/Bancal/", {
-          headers: { Authorization: `Bearer ${newToken}` },
-        });
-        return response.data;
-      } catch (refreshError) {
-        addToast({
-          title: "Sesión expirada",
-          description: "No se pudo refrescar el token, por favor inicia sesión nuevamente.",
-          timeout: 3000,
-          color: "danger",
-        });
-        throw new Error("No se pudo refrescar el token");
-      }
-    } else if (error.response?.status === 403) {
-      addToast({
-        title: "Acceso denegado",
-        description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
-        timeout: 3000,
-        color: "danger",
-      });
-    } else {
-      addToast({
-        title: "Error",
-        description: error.response?.data?.message || "Error al obtener bancales",
-        timeout: 3000,
-        color: "danger",
-      });
-    }
-    throw error;
-  }
-};
 
 const calculateRa = (latitude: number, dayOfYear: number): number => {
   const latRad = (latitude * Math.PI) / 180;
@@ -129,7 +63,7 @@ export const useEvapotranspiracion = (cultivoId: number) => {
         throw new Error("Cultivo no encontrado");
       }
 
-      const bancal = bancales.find((b) => b.id === cultivo.Bancal);
+      const bancal = bancales.find((b) => b.id === cultivo.bancal_id);
       if (!bancal) {
         addToast({
           title: "Error",
@@ -140,7 +74,7 @@ export const useEvapotranspiracion = (cultivoId: number) => {
         throw new Error("Bancal no encontrado");
       }
 
-      const latitud = bancal.posY ?? 0;  
+      const latitud = bancal.posY ?? 0;
 
       const et0Data: EvapotranspiracionData[] = datosMeteorologicos.map(
         (dato: SensorData, index: number) => {
@@ -154,14 +88,14 @@ export const useEvapotranspiracion = (cultivoId: number) => {
           );
 
           const ra = calculateRa(latitud, dayOfYear);
-          const tAvg = dato.temperatura ?? 20;  
+          const tAvg = dato.temperatura ?? 20;
           const tMax = tAvg + 2;
           const tMin = tAvg - 2;
           const et0 = calculateET0(tMax, tMin, ra);
 
           return {
-            id: index + 1,  
-            fk_bancal: cultivo.Bancal, 
+            id: index + 1,
+            fk_bancal: cultivo.bancal_id,
             fecha: dato.fecha_medicion,
             valor: et0,
             creado: new Date().toISOString(),
@@ -169,12 +103,6 @@ export const useEvapotranspiracion = (cultivoId: number) => {
         }
       );
 
-      addToast({
-        title: "Éxito",
-        description: "Evapotranspiración calculada con éxito",
-        timeout: 3000,
-        color: "success",
-      });
       return et0Data;
     },
     enabled:

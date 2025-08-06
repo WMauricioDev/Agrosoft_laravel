@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Formulario from "@/components/globales/Formulario";
@@ -51,9 +51,37 @@ const RegistrarSensorPage: React.FC = () => {
     bancal_id: null,
     bancal_nombre: null,
   });
-  const { data: bancales, isLoading: isLoadingBancales } = useBancales();
+  const { data: bancales, isLoading: isLoadingBancales, error: errorBancales } = useBancales();
   const createSensor = useCreateSensor();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("[RegistrarSensorPage] Valor de bancales: ", {
+      bancales,
+      isArray: Array.isArray(bancales),
+      type: typeof bancales,
+    });
+    if (errorBancales) {
+      addToast({
+        title: "Error",
+        description: errorBancales.message || "Error al cargar los bancales",
+        timeout: 3000,
+        color: "danger",
+      });
+      if (errorBancales.message.includes("No se encontró el token de autenticación")) {
+        navigate("/login");
+      }
+    }
+    if (bancales && !Array.isArray(bancales)) {
+      console.error("[RegistrarSensorPage] bancales no es un array:", bancales);
+      addToast({
+        title: "Error",
+        description: "Los datos de bancales no son válidos. Contacta al equipo de cultivos.",
+        timeout: 3000,
+        color: "danger",
+      });
+    }
+  }, [bancales, errorBancales, navigate]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -69,7 +97,7 @@ const RegistrarSensorPage: React.FC = () => {
         medida_maxima: config.medida_maxima,
       });
     } else if (name === "bancal_id") {
-      const bancal = bancales?.find((b) => b.id === Number(value));
+      const bancal = Array.isArray(bancales) ? bancales.find((b) => b.id === Number(value)) : null;
       setSensor({
         ...sensor,
         bancal_id: value ? Number(value) : null,
@@ -111,7 +139,19 @@ const RegistrarSensorPage: React.FC = () => {
   if (isLoadingBancales) {
     return (
       <DefaultLayout>
-        <p className="text-gray-600 text-center">Cargando bancales...</p>
+        <div className="w-full flex flex-col items-center min-h-screen p-6">
+          <p className="text-gray-600 text-center">Cargando bancales...</p>
+        </div>
+      </DefaultLayout>
+    );
+  }
+
+  if (errorBancales) {
+    return (
+      <DefaultLayout>
+        <div className="w-full flex flex-col items-center min-h-screen p-6">
+          <p className="text-red-500 text-center">Error: {errorBancales.message}</p>
+        </div>
       </DefaultLayout>
     );
   }
@@ -208,11 +248,17 @@ const RegistrarSensorPage: React.FC = () => {
             onChange={handleChange}
           >
             <option value="">Sin bancal</option>
-            {bancales?.map((bancal) => (
-              <option key={bancal.id} value={bancal.id}>
-                {bancal.nombre}
+            {Array.isArray(bancales) && bancales.length > 0 ? (
+              bancales.map((bancal) => (
+                <option key={bancal.id} value={bancal.id}>
+                  {bancal.nombre}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>
+                No hay bancales disponibles
               </option>
-            ))}
+            )}
           </select>
         </div>
 

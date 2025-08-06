@@ -2,16 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { Sensor } from "@/types/iot/type";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/iot/sensores/`;
+const API_URL = `${BASE_URL}/api/sensors`;
 
 const createSensor = async (sensor: Sensor) => {
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    console.error("[useCreateSensor] No se encontró el token de autenticación.");
-    throw new Error("No se encontró el token de autenticación.");
-  }
-
   if (!sensor.tipo_sensor_id || sensor.tipo_sensor_id <= 0) {
     console.error("[useCreateSensor] Validación fallida: tipo_sensor_id inválido", sensor);
     throw new Error("El tipo de sensor es inválido.");
@@ -28,12 +23,10 @@ const createSensor = async (sensor: Sensor) => {
     bancal_id: sensor.bancal_id || null,
   };
 
-  console.log("[useCreateSensor] Enviando POST a /iot/sensores/ con datos:", JSON.stringify(sensorData, null, 2));
+  console.log("[useCreateSensor] Enviando POST a /api/sensors con datos:", JSON.stringify(sensorData, null, 2));
   try {
-    const response = await api.post(API_URL, sensorData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log("[useCreateSensor] Respuesta de POST /iot/sensores/: ", response.data);
+    const response = await api.post(API_URL, sensorData);
+    console.log("[useCreateSensor] Respuesta de POST /api/sensors: ", response.data);
     return response.data;
   } catch (error: any) {
     const errorMessage =
@@ -42,7 +35,7 @@ const createSensor = async (sensor: Sensor) => {
         .map(([key, value]) => `${key}: ${value}`)
         .join(", ") ||
       "Error al crear el sensor";
-    console.error("[useCreateSensor] Error en POST /iot/sensores/: ", {
+    console.error("[useCreateSensor] Error en POST /api/sensors: ", {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status,
@@ -71,7 +64,7 @@ export const useCreateSensor = () => {
       addToast({
         title: "Error",
         description: error.message,
-        timeout: 5000,
+        timeout: 3000,
         color: "danger",
       });
     },

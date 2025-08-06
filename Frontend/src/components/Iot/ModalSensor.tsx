@@ -1,137 +1,149 @@
-import ReuModal from "@/components/globales/ReuModal";
-import { ReuInput } from "@/components/globales/ReuInput"; 
-import { Sensor } from "@/types/iot/type";
-import { useBancales } from "@/hooks/cultivo/usebancal";
-import { useGetTipoSensores } from "@/hooks/iot/sensores/useGetTipoSensores";
+import React, { useEffect } from "react";
 import { useModalSensorForm } from "@/hooks/iot/sensores/useModalSensorForm";
 import { addToast } from "@heroui/react";
+import { Sensor, TipoSensor } from "@/types/iot/type";
+import { Bancal } from "@/types/cultivo/Bancal";
 
 interface ModalSensorProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  sensor: Sensor;  
-  onConfirm: (editedSensor: Sensor | null) => void;
+  sensor: Sensor;
+  tipoSensores: TipoSensor[] | undefined;
+  bancales: Bancal[] | undefined;
+  onConfirm: (sensor: Sensor | null) => void;
   isDelete?: boolean;
-} 
+}
 
-export const ModalSensor = ({ isOpen, onOpenChange, sensor, onConfirm, isDelete = false }: ModalSensorProps) => {
-  const { data: bancales, isLoading: isLoadingBancales } = useBancales();
-  const { data: tipoSensores, isLoading: isLoadingTipoSensores, error: tipoSensoresError } = useGetTipoSensores();
-  const { editedSensor, handleChange, handleConfirm } = useModalSensorForm({
+const ModalSensor: React.FC<ModalSensorProps> = ({
+  isOpen,
+  onOpenChange,
+  sensor,
+  tipoSensores,
+  bancales,
+  onConfirm,
+  isDelete = false,
+}) => {
+  const { editedSensor, handleChange, handleConfirm, tipoSensoresError } = useModalSensorForm({
     sensor,
     tipoSensores,
-    bancales,
+    bancales: Array.isArray(bancales) ? bancales : [], // Asegurar que bancales sea un array
     onConfirm,
     isDelete,
   });
 
-  if (tipoSensoresError) {
-    console.error("[ModalSensor] Error al cargar tipoSensores: ", {
-      message: tipoSensoresError.message,
+  useEffect(() => {
+    console.log("[ModalSensor] Valor de bancales recibido: ", {
+      bancales,
+      isArray: Array.isArray(bancales),
+      type: typeof bancales,
     });
+    if (bancales && !Array.isArray(bancales)) {
+      console.error("[ModalSensor] bancales no es un array:", bancales);
+      addToast({
+        title: "Error",
+        description: "Los datos de bancales no son válidos. Contacta al equipo de cultivos.",
+        timeout: 3000,
+        color: "danger",
+      });
+    }
+  }, [bancales]);
+
+  if (!isOpen) return null;
+
+  if (tipoSensoresError) {
     addToast({
       title: "Error",
-      description: "No se pudieron cargar los tipos de sensores.",
-      timeout: 5000,
+      description: tipoSensoresError.message,
+      timeout: 3000,
       color: "danger",
     });
-  }
-
-  if (isLoadingTipoSensores || isLoadingBancales) {
-    console.log("[ModalSensor] Cargando datos: tipoSensores=", isLoadingTipoSensores, "bancales=", isLoadingBancales);
-    return <p>Cargando datos...</p>;
-  }
-
-  if (!tipoSensores?.length) {
-    console.error("[ModalSensor] No hay tipos de sensores disponibles.");
-    return <p>No hay tipos de sensores disponibles. Por favor, crea uno en el backend.</p>;
+    return <div>Error: {tipoSensoresError.message}</div>;
   }
 
   return (
-    <ReuModal
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      title={isDelete ? "¿Estás seguro de eliminar este sensor?" : "Editar Sensor"}
-      onConfirm={handleConfirm}
-      confirmText={isDelete ? "Eliminar" : "Guardar"}
-      cancelText="Cancelar"
-    >
-      {isDelete ? (
-        <p>Esta acción es irreversible.</p>
-      ) : (
-        <div className="space-y-4">
-          <ReuInput
-            label="Nombre"
+    <div className="modal">
+      <h2>{isDelete ? "Eliminar Sensor" : "Editar Sensor"}</h2>
+      <form>
+        <label>
+          Nombre:
+          <input
             type="text"
             value={editedSensor?.nombre || ""}
             onChange={(e) => handleChange("nombre", e)}
-            required
+            disabled={isDelete}
           />
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Tipo de Sensor</label>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={editedSensor?.tipo_sensor || ""}
-              onChange={(e) => handleChange("tipo_sensor", e)}
-              required
-            >
-              <option value="">Seleccione un tipo de sensor</option>
-              {tipoSensores.map((tipoSensor) => (
-                <option key={tipoSensor.id} value={tipoSensor.nombre}>
-                  {tipoSensor.nombre}
+        </label>
+        <label>
+          Tipo de Sensor:
+          <select
+            value={editedSensor?.tipo_sensor || ""}
+            onChange={(e) => handleChange("tipo_sensor", e)}
+            disabled={isDelete}
+          >
+            <option value="">Seleccione un tipo</option>
+            {tipoSensores?.map((tipo) => (
+              <option key={tipo.tipo_sensor_id} value={tipo.nombre}>
+                {tipo.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Bancal:
+          <select
+            value={editedSensor?.bancal_id || ""}
+            onChange={(e) => handleChange("bancal_id", e)}
+            disabled={isDelete}
+          >
+            <option value="">Sin bancal</option>
+            {Array.isArray(bancales) && bancales.length > 0 ? (
+              bancales.map((bancal) => (
+                <option key={bancal.id} value={bancal.id}>
+                  Bancal {bancal.id} {bancal.posY ? `(PosY: ${bancal.posY})` : ""}
                 </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
-            <p className="mt-1 text-sm text-gray-900">{editedSensor?.unidad_medida || ""}</p>
-          </div>
-          <ReuInput
-            label="Descripción"
-            type="text"
+              ))
+            ) : (
+              <option value="" disabled>
+                No hay bancales disponibles
+              </option>
+            )}
+          </select>
+        </label>
+        <label>
+          Medida Mínima:
+          <input
+            type="number"
+            value={editedSensor?.medida_minima || ""}
+            onChange={(e) => handleChange("medida_minima", e)}
+            disabled={isDelete}
+          />
+        </label>
+        <label>
+          Medida Máxima:
+          <input
+            type="number"
+            value={editedSensor?.medida_maxima || ""}
+            onChange={(e) => handleChange("medida_maxima", e)}
+            disabled={isDelete}
+          />
+        </label>
+        <label>
+          Descripción:
+          <textarea
             value={editedSensor?.descripcion || ""}
             onChange={(e) => handleChange("descripcion", e)}
+            disabled={isDelete}
           />
-          <ReuInput
-            label="Código del Dispositivo"
-            type="text"
-            value={editedSensor?.device_code || ""}
-            onChange={(e) => handleChange("device_code", e)}
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <ReuInput
-              label="Medida Mínima"
-              type="number"
-              step="0.01"
-              value={editedSensor?.medida_minima?.toString() || "0"}
-              onChange={(e) => handleChange("medida_minima", e)}
-            />
-            <ReuInput
-              label="Medida Máxima"
-              type="number"
-              step="0.01"
-              value={editedSensor?.medida_maxima?.toString() || "0"}
-              onChange={(e) => handleChange("medida_maxima", e)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Bancal</label>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={editedSensor?.bancal_id?.toString() || ""}
-              onChange={(e) => handleChange("bancal_id", e)}
-            >
-              <option value="">Sin bancal</option>
-              {bancales?.map((bancal) => (
-                <option key={bancal.id} value={bancal.id}>
-                  {bancal.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      )}
-    </ReuModal>
+        </label>
+        <button type="button" onClick={handleConfirm}>
+          {isDelete ? "Eliminar" : "Guardar"}
+        </button>
+        <button type="button" onClick={() => onOpenChange(false)}>
+          Cancelar
+        </button>
+      </form>
+    </div>
   );
 };
+
+export default ModalSensor;

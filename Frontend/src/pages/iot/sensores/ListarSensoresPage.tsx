@@ -5,38 +5,60 @@ import { useUpdateSensor } from "@/hooks/iot/sensores/usePutSensor";
 import { useDeleteSensor } from "@/hooks/iot/sensores/useDeleteSensor";
 import { useToggleSensor } from "@/hooks/iot/sensores/useToggleSensor";
 import { useBancales } from "@/hooks/cultivo/usebancal";
+import { useGetTipoSensores } from "@/hooks/iot/sensores/useGetTipoSensores";
 import { useNavigate } from "react-router-dom";
 import Tabla from "@/components/globales/Tabla";
-import { ModalSensor } from "@/components/Iot/ModalSensor";
+import ModalSensor from "@/components/Iot/ModalSensor";  
 import GuideModal from "@/components/Iot/GuideModal";
 import { Sensor } from "@/types/iot/type";
 import { EditIcon, Trash2, HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { addToast } from "@heroui/react";
 import Switcher from "@/components/switch";
 
 export default function ListarSensoresPage() {
-  const { sensores, isLoading, error } = useSensores();
+  const navigate = useNavigate();
+  const { sensores, isLoading: isLoadingSensores, error: errorSensores } = useSensores();
+  const { data: bancales, isLoading: isLoadingBancales, error: errorBancales } = useBancales();
+  const { data: tipoSensores } = useGetTipoSensores();
   const updateSensor = useUpdateSensor();
   const deleteSensor = useDeleteSensor();
   const toggleSensor = useToggleSensor();
-  const { data: bancales } = useBancales();
   const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [sensoresLocal, setSensoresLocal] = useState<Sensor[]>([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setSensoresLocal(sensores);
   }, [sensores]);
 
-  console.log("[ListarSensoresPage] Estado inicial: ", {
-    sensores,
-    isLoading,
-    error,
-    bancales,
-  });
+  useEffect(() => {
+    console.log("[ListarSensoresPage] Estado inicial: ", {
+      sensores,
+      isLoadingSensores,
+      errorSensores,
+      bancales,
+      isLoadingBancales,
+      errorBancales,
+      tipoSensores,
+      isArrayBancales: Array.isArray(bancales),
+      typeBancales: typeof bancales,
+    });
+
+    if (errorBancales) {
+      addToast({
+        title: "Error",
+        description: errorBancales.message || "Error al cargar los bancales",
+        timeout: 3000,
+        color: "danger",
+      });
+      if (errorBancales.message.includes("No se encontró el token de autenticación")) {
+        navigate("/login");
+      }
+    }
+  }, [bancales, errorBancales, navigate]);
 
   const columns = [
     { name: "ID", uid: "id" },
@@ -50,7 +72,7 @@ export default function ListarSensoresPage() {
   ];
 
   const formattedData = useMemo(() => {
-    console.log("[ListarSensoresPage] Formateando datos para la tabla: ", { sensores, bancales });
+    console.log("[ListarSensoresPage] Formateando datos para la tabla: ", { sensoresLocal, bancales });
     return sensoresLocal.map((sensor: Sensor) => ({
       id: sensor.id ? sensor.id.toString() : "N/A",
       nombre: sensor.nombre || "Sin nombre",
@@ -127,7 +149,7 @@ export default function ListarSensoresPage() {
         </div>
       ),
     }));
-  }, [sensoresLocal, bancales, toggleSensor]);
+  }, [sensoresLocal, toggleSensor]);
 
   const handleConfirmEdit = (editedSensor: Sensor | null) => {
     if (editedSensor?.id) {
@@ -165,6 +187,36 @@ export default function ListarSensoresPage() {
     }
   };
 
+  if (isLoadingSensores || isLoadingBancales) {
+    return (
+      <DefaultLayout>
+        <div className="w-full flex flex-col items-center min-h-screen p-6">
+          <p className="text-gray-600 text-center">Cargando datos...</p>
+        </div>
+      </DefaultLayout>
+    );
+  }
+
+  if (errorSensores || errorBancales) {
+    const errorMessage = errorSensores?.message || errorBancales?.message || "Error al cargar los datos";
+    addToast({
+      title: "Error",
+      description: errorMessage,
+      timeout: 3000,
+      color: "danger",
+    });
+    if (errorMessage.includes("No se encontró el token de autenticación")) {
+      navigate("/login");
+    }
+    return (
+      <DefaultLayout>
+        <div className="w-full flex flex-col items-center min-h-screen p-6">
+          <p className="text-red-500 text-center">Error: {errorMessage}</p>
+        </div>
+      </DefaultLayout>
+    );
+  }
+
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
@@ -196,46 +248,45 @@ export default function ListarSensoresPage() {
               + Registrar Sensor
             </button>
           </div>
-          {isLoading ? (
-            <p className="text-gray-600 text-center">Cargando sensores...</p>
-          ) : error ? (
-            <p className="text-red-500 text-center">Error: {error.message}</p>
+          {sensoresLocal.length === 0 ? (
+            <p className="text-gray-600 text-center mt-4">No hay sensores registrados</p>
           ) : (
-            <>
-              <Tabla columns={columns} data={formattedData} responsiveColumns={["nombre", "estado"]} />
-              {sensoresLocal.length === 0 && (
-                <p className="text-gray-600 text-center mt-4">No hay sensores registrados</p>
-              )}
-            </>
+            <Tabla columns={columns} data={formattedData} responsiveColumns={["nombre", "estado"]} />
           )}
         </div>
+        <ModalSensor
+          isOpen={isEditModalOpen}
+          onOpenChange={(open) => {
+            console.log("[ListarSensoresPage] Cambiando estado del modal de edición: ", open);
+            setIsEditModalOpen(open);
+            if (!open) setSelectedSensor(null);
+          }}
+          sensor={selectedSensor!}
+          tipoSensores={tipoSensores || []}
+          bancales={Array.isArray(bancales) ? bancales : []}
+          onConfirm={handleConfirmEdit}
+        />
+        <ModalSensor
+          isOpen={isDeleteModalOpen}
+          onOpenChange={(open) => {
+            console.log("[ListarSensoresPage] Cambiando estado del modal de eliminación: ", open);
+            setIsDeleteModalOpen(open);
+            if (!open) setSelectedSensor(null);
+          }}
+          sensor={selectedSensor!}
+          tipoSensores={tipoSensores || []}
+          bancales={Array.isArray(bancales) ? bancales : []}
+          onConfirm={handleConfirmDelete}
+          isDelete
+        />
+        <GuideModal
+          isOpen={isGuideModalOpen}
+          onClose={() => {
+            console.log("[ListarSensoresPage] Cerrando modal de guía");
+            setIsGuideModalOpen(false);
+          }}
+        />
       </div>
-      <ModalSensor
-        isOpen={isEditModalOpen}
-        onOpenChange={(open) => {
-          console.log("[ListarSensoresPage] Cambiando estado del modal de edición: ", open);
-          setIsEditModalOpen(open);
-        }}
-        sensor={selectedSensor!}
-        onConfirm={handleConfirmEdit}
-      />
-      <ModalSensor
-        isOpen={isDeleteModalOpen}
-        onOpenChange={(open) => {
-          console.log("[ListarSensoresPage] Cambiando estado del modal de eliminación: ", open);
-          setIsDeleteModalOpen(open);
-        }}
-        sensor={selectedSensor!}
-        onConfirm={handleConfirmDelete}
-        isDelete
-      />
-      <GuideModal
-        isOpen={isGuideModalOpen}
-        onClose={() => {
-          console.log("[ListarSensoresPage] Cerrando modal de guía");
-          setIsGuideModalOpen(false);
-        }}
-      />
     </DefaultLayout>
   );
 }

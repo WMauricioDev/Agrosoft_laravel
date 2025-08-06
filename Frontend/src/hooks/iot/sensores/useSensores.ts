@@ -1,23 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { Sensor } from "@/types/iot/type";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/iot/sensores/`;
+const API_URL = `${BASE_URL}/api/sensors`;
 
 const fetchSensores = async (): Promise<Sensor[]> => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem("access_token");
-  console.log("Token actual:", token);
-
+  console.log("[useSensores] Enviando GET a /api/sensors");
   try {
-    console.log("[useSensores] Enviando GET a /iot/sensores/");
-    const response = await api.get(API_URL, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
-    console.log("[useSensores] Respuesta de GET /iot/sensores/: ", response.data);
+    const response = await api.get(API_URL);
+    console.log("[useSensores] Respuesta de GET /api/sensors: ", response.data);
     return response.data.map((sensor: any) => ({
       id: sensor.id || 0,
       nombre: sensor.nombre || "Sin nombre",
@@ -33,27 +26,21 @@ const fetchSensores = async (): Promise<Sensor[]> => {
       bancal_nombre: sensor.bancal_nombre || "Sin bancal",
     }));
   } catch (error: any) {
-    console.error("[useSensores] Error en GET /iot/sensores/: ", {
+    console.error("[useSensores] Error en GET /api/sensors: ", {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status,
     });
+    let errorMessage = error.response?.data?.message || "Error al cargar los sensores";
+    if (error.message.includes("CORS") || error.message.includes("Network Error")) {
+      errorMessage = "No se puede conectar al servidor debido a un problema de CORS. Contacta al administrador.";
+    }
     addToast({
       title: "Error",
-      description: error.response?.data?.message || "Error al cargar los sensores. Verifica la configuración del servidor.",
+      description: errorMessage,
       timeout: 3000,
       color: "danger",
     });
-    if (error.message.includes("CORS") || error.message.includes("Network Error")) {
-      addToast({
-        title: "Error de CORS",
-        description: "No se puede conectar al servidor debido a un problema de CORS. Contacta al administrador.",
-        timeout: 5000,
-        color: "danger",
-      });
-    } else if (!token) {
-      navigate("/login");
-    }
     throw error;
   }
 };
@@ -62,6 +49,7 @@ export const useSensores = () => {
   const sensoresQuery = useQuery<Sensor[], Error>({
     queryKey: ["sensores"],
     queryFn: fetchSensores,
+    staleTime: 1000 * 60,
   });
 
   console.log("[useSensores] Estado actual: ", {

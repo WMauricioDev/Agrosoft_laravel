@@ -1,4 +1,5 @@
 export interface Bancal {
+    posY: any;
     id?: number;
     nombre: string;
     tam_x: number;

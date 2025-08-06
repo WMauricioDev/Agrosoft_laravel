@@ -36,9 +36,8 @@ const registrarDatosMeteorologicos = async (data: any) => {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status,
-      stack: error.stack,
     });
-    const errorMessage = error.response?.data?.message || `Error al registrar los datos: ${error.message}`;
+    const errorMessage = error.response?.data?.message || "Error al registrar los datos meteorológicos";
     throw new Error(errorMessage);
   }
 };

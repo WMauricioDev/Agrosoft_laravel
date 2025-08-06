@@ -4,7 +4,7 @@ import { Sensor, TipoSensor } from "@/types/iot/type";
 import { Bancal } from "@/types/cultivo/Bancal";
 
 interface UseModalSensorFormProps {
-  sensor: Sensor;  
+  sensor: Sensor;
   tipoSensores: TipoSensor[] | undefined;
   bancales: Bancal[] | undefined;
   onConfirm: (editedSensor: Sensor | null) => void;
@@ -12,7 +12,7 @@ interface UseModalSensorFormProps {
 }
 
 export const useModalSensorForm = ({
-  sensor, 
+  sensor,
   tipoSensores,
   bancales,
   onConfirm,
@@ -28,6 +28,12 @@ export const useModalSensorForm = ({
     if (!sensor || !tipoSensores) {
       console.error("[useModalSensorForm] Sensor o tipoSensores no disponibles: ", { sensor, tipoSensores });
       setTipoSensoresError(new Error("Datos necesarios no disponibles."));
+      addToast({
+        title: "Error",
+        description: "Datos necesarios no disponibles",
+        timeout: 3000,
+        color: "danger",
+      });
       return;
     }
 

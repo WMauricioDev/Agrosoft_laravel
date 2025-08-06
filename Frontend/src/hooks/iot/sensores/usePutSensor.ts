@@ -2,16 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { Sensor } from "@/types/iot/type";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/iot/sensores/`;
+const API_URL = `${BASE_URL}/api/sensors`;
 
 const updateSensor = async (sensor: Sensor) => {
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    console.error("[useUpdateSensor] No se encontró el token de autenticación.");
-    throw new Error("No se encontró el token de autenticación.");
-  }
-
   if (!sensor.tipo_sensor_id || sensor.tipo_sensor_id <= 0) {
     console.error("[useUpdateSensor] Validación fallida: tipo_sensor_id inválido", sensor);
     throw new Error("El tipo de sensor es inválido.");
@@ -28,12 +23,10 @@ const updateSensor = async (sensor: Sensor) => {
     bancal_id: sensor.bancal_id || null,
   };
 
-  console.log("[useUpdateSensor] Enviando PUT a /iot/sensores/" + sensor.id + "/ con datos:", JSON.stringify(sensorData, null, 2));
+  console.log("[useUpdateSensor] Enviando PUT a /api/sensors" + sensor.id + "/ con datos:", JSON.stringify(sensorData, null, 2));
   try {
-    const response = await api.put(`${API_URL}${sensor.id}/`, sensorData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log("[useUpdateSensor] Respuesta de PUT /iot/sensores/" + sensor.id + "/: ", response.data);
+    const response = await api.put(`${API_URL}${sensor.id}/`, sensorData);
+    console.log("[useUpdateSensor] Respuesta de PUT /api/sensors" + sensor.id + "/: ", response.data);
     return response.data;
   } catch (error: any) {
     const errorMessage =
@@ -42,7 +35,7 @@ const updateSensor = async (sensor: Sensor) => {
         .map(([key, value]) => `${key}: ${value}`)
         .join(", ") ||
       "Error al actualizar el sensor";
-    console.error("[useUpdateSensor] Error en PUT /iot/sensores/" + sensor.id + "/: ", {
+    console.error("[useUpdateSensor] Error en PUT /api/sensors" + sensor.id + "/: ", {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status,
@@ -71,7 +64,7 @@ export const useUpdateSensor = () => {
       addToast({
         title: "Error",
         description: error.message,
-        timeout: 5000,
+        timeout: 3000,
         color: "danger",
       });
     },
