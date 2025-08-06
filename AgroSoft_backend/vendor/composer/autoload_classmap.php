@@ -22,6 +22,7 @@ return array(
     'App\\Http\\Controllers\\IoT\\DatoMeteorologicoController' => $baseDir . '/app/Http/Controllers/IoT/DatoMeteorologicoController.php',
     'App\\Http\\Controllers\\IoT\\SensorController' => $baseDir . '/app/Http/Controllers/IoT/SensorController.php',
     'App\\Http\\Controllers\\IoT\\TipoSensorController' => $baseDir . '/app/Http/Controllers/IoT/TipoSensorController.php',
+    'App\\Http\\Controllers\\Reportes\\Usuarios\\ReporteUsuariosController' => $baseDir . '/app/Http/Controllers/Reportes/Usuarios/ReporteUsuariosController.php',
     'App\\Http\\Controllers\\Trazabilidad\\ActividadesController' => $baseDir . '/app/Http/Controllers/Trazabilidad/ActividadesController.php',
     'App\\Http\\Controllers\\Trazabilidad\\AfeccionController' => $baseDir . '/app/Http/Controllers/Trazabilidad/AfeccionController.php',
     'App\\Http\\Controllers\\Trazabilidad\\BancalController' => $baseDir . '/app/Http/Controllers/Trazabilidad/BancalController.php',

@@ -631,6 +631,7 @@ class ComposerStaticInit88970a0117c062eed55fa8728fc43833
         'App\\Http\\Controllers\\IoT\\DatoMeteorologicoController' => __DIR__ . '/../..' . '/app/Http/Controllers/IoT/DatoMeteorologicoController.php',
         'App\\Http\\Controllers\\IoT\\SensorController' => __DIR__ . '/../..' . '/app/Http/Controllers/IoT/SensorController.php',
         'App\\Http\\Controllers\\IoT\\TipoSensorController' => __DIR__ . '/../..' . '/app/Http/Controllers/IoT/TipoSensorController.php',
+        'App\\Http\\Controllers\\Reportes\\Usuarios\\ReporteUsuariosController' => __DIR__ . '/../..' . '/app/Http/Controllers/Reportes/Usuarios/ReporteUsuariosController.php',
         'App\\Http\\Controllers\\Trazabilidad\\ActividadesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Trazabilidad/ActividadesController.php',
         'App\\Http\\Controllers\\Trazabilidad\\AfeccionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Trazabilidad/AfeccionController.php',
         'App\\Http\\Controllers\\Trazabilidad\\BancalController' => __DIR__ . '/../..' . '/app/Http/Controllers/Trazabilidad/BancalController.php',

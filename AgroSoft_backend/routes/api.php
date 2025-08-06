@@ -393,7 +393,7 @@ Route::middleware('auth:api')->post('/user/password', [CambiarPasswordController
     Route::resource('dato_meteorologicos', DatoMeteorologicoController::class);
     Route::resource('dato_historicos', DatoHistoricoController::class);
 
-    //Repoortes
+    //Reportes
     Route::middleware('auth:api')->get('/usuarios/usuarios', [ReporteUsuariosController::class, 'generar']);
 
 

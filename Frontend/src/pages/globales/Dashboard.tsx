@@ -22,17 +22,19 @@ const Dashboard = () => {
 
   // Hooks para obtener datos
   const { ventas, isLoading: loadingVentas, isError: errorVentas, error: errorVentasError } = useVenta();
-  const { data: actividades, isLoading: loadingActividades, error: errorActividades } = useActividades();
+const { data: actividadesData, isLoading: loadingActividades, error: errorActividades } = useActividades();
   const { data: insumos, isLoading: loadingInsumos, error: errorInsumos } = useInsumos();
 
   // Procesar datos de actividades
-  const activities = actividades?.map((actividad) => ({
-    id: actividad.id || `${actividad.descripcion}-${actividad.fecha_inicio}`,
-    title: actividad.descripcion || "Actividad sin descripción",
-    date: actividad.fecha_inicio?.split("T")[0] || currentDate.toISOString().split("T")[0],
-    time: actividad.fecha_inicio?.split("T")[1]?.slice(0, 5) || "00:00",
-    estado: actividad.estado || "PENDIENTE",
-  })) || [];
+  console.log("🔴actividades:", actividadesData, typeof actividadesData);
+const activities = (actividadesData?.data ?? []).map((actividad) => ({
+  id: actividad.id || `${actividad.descripcion}-${actividad.fecha_inicio}`,
+  title: actividad.descripcion || "Actividad sin descripción",
+  date: actividad.fecha_inicio?.split("T")[0] || currentDate.toISOString().split("T")[0],
+  time: actividad.fecha_inicio?.split("T")[1]?.slice(0, 5) || "00:00",
+  estado: actividad.estado || "PENDIENTE",
+}));
+
 
   const pastActivities = activities.filter((activity) => new Date(activity.date) < currentDate);
   const futureActivities = activities.filter((activity) => new Date(activity.date) >= currentDate);
